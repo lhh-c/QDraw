@@ -5,9 +5,9 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 Item {
     id: root
-        property alias fileOpen: _fileOpen
-        property alias about: _about
-        property alias colorDialog: _colorDialog
+    property alias fileOpen: _fileOpen
+    property alias about: _about
+    property alias colorDialog: _colorDialog
     property alias penSizeDialog: _penSizeDialog
     FileDialog {
         id: _fileOpen

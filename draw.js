@@ -26,3 +26,7 @@ Qt.include({
     setPenColor: setPenColor,
     openPenSizeDialog: openPenSizeDialog
 })
+
+function open(){
+    content.dialogs.fileOpen.open()
+}
