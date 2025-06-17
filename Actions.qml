@@ -120,6 +120,6 @@ Item {
     Action {
         id:_fullscreen
         text:qsTr("&全屏")
-        // icon.name:"view-fullscreen"
+        icon.name:"view-fullscreen"
     }
 }

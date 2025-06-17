@@ -3,6 +3,10 @@ function func() {
 }
 var currentPenColor = "black" // 默认颜色
 
+function openColorDialog() {
+    content.dialogs.colorDialog.open()
+}
+
 function setPenColor(color) {
     currentPenColor = color
     // 这里可以添加更新画布颜色的逻辑
