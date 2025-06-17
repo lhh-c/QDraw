@@ -1,7 +1,9 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import "draw.js" as Controller
+
 
 ApplicationWindow {
     id: window
@@ -15,7 +17,7 @@ ApplicationWindow {
         Menu {
             title: qsTr("文件")
         MenuItem {
-                action: actions.newFile}
+                action: actions.newfile}
             MenuItem {
                 action: actions.open}
             MenuSeparator {}  // 分隔线
@@ -57,10 +59,10 @@ ApplicationWindow {
             }
             MenuSeparator {}
             MenuItem {
-                action: actions.zoomIn//text: qsTr("放大 (+)")
+                action: actions.zoomin//text: qsTr("放大 (+)")
             }
             MenuItem {
-                action: actions.zoomOut//text: qsTr("缩小 (-)")
+                action: actions.zoomout//text: qsTr("缩小 (-)")
             }
         }
 
@@ -78,7 +80,7 @@ ApplicationWindow {
             anchors.fill: parent
 
             // 文件操作按钮组
-            ToolButton { action: actions.newFile }
+            ToolButton { action: actions.newfile }
             ToolButton { action: actions.open }
             ToolButton { action: actions.save }
 
@@ -109,6 +111,7 @@ ApplicationWindow {
     Actions {
         id: actions
         open.onTriggered:Controller.open();
+        color.onTriggered: dialogs.openColorDialog() // 绑定颜色动作
         // newFile.onTriggered:Controller.newfile();
         // close.onTriggered:Controller.close();
         // quit.conTriggered:Controller.quit();
@@ -119,6 +122,8 @@ ApplicationWindow {
         // paste.onTriggered:Controller.paste();
         // pen.onTriggered:Controller.pen();
         // color.onTriggered:Controller.color()
+        about.onTriggered: content.dialogs.about.open();
+        // fullscreen.onTriggered:
     }
     //Content Area
     Content {
