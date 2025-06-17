@@ -17,30 +17,31 @@ Item {
     property alias paste: _paste
     property alias zoomin: _zoomin
     property alias zoomout: _zoomout
+    property alias fullscreen: _fullscreen
     Action {
         id:_open
-        text: qsTr("&Open...")
+        text: qsTr("&打开")
         icon.name: "document-open"
         shortcut: StandardKey.Open
     }
 
     Action {
         id: _close
-        text: qsTr("&Close...")
+        text: qsTr("&关闭")
         icon.name: "document-close"
         shortcut: StandardKey.Close
     }
 
     Action {
         id: _save
-        text: qsTr("&Save")
+        text: qsTr("&保存")
         shortcut: StandardKey.Save
         icon.name: "document-save"
     }
 
     Action {
         id: _quit
-        text: qsTr("&Exit")
+        text: qsTr("&退出")
         icon.name: "application-exit"
         shortcut: StandardKey.Quit
         onTriggered: Qt.quit();
@@ -48,71 +49,75 @@ Item {
 
     Action {
         id: _about
-        text: qsTr("&About")
+        text: qsTr("&关于")
         icon.name: "help-about"
     }
 
     Action {
         id:_newfile
-        text:qsTr("&NewFile")
-        // icon://暂时不知道
+        text:qsTr("&新建")
+        icon.name:"document-new"
     }
 
     Action {
         id:_pen
-        text:qsTr("&Pensize")
-        // icon:
+        text:qsTr("&笔号")
+        icon.name:"draw-pen" // 修改为更合适的图标
+        onTriggered:dialogs.openPenSizeDialog()// 触发打开笔号对话框
     }
 
     Action {
         id:_color
-        text:qsTr("&Pencolor")
+        text:qsTr("&笔色")
         icon.name: "color-picker" // 可以使用合适的图标
-           onTriggered: {
-               // 触发打开颜色对话框
-               dialogs.openColorDialog()
-           }
+           onTriggered:dialogs.openColorDialog()
     }
 
     Action {
         id:_undo
-        text:qsTr("&Undo")
-        // icon:
+        text:qsTr("&撤销")
+        icon.name:"edit-undo"
     }
 
     Action {
         id:_redo
-        text:qsTr("&Redo")
-        // icon:
+        text:qsTr("&重画")
+        icon.name:"edit-redo"
     }
 
     Action {
         id:_cut
-        text:qsTr("&Cut")
-        // icon:
+        text:qsTr("&剪切")
+        icon.name:"edit-cut"
     }
 
     Action {
         id:_copy
-        text:qsTr("&Copy")
-        // icon:
+        text:qsTr("&复制")
+        icon.name:"edit-copy"
     }
 
     Action {
         id:_paste
-        text:qsTr("&Paste")
-        // icon:
+        text:qsTr("&粘贴")
+        icon.name:"edit-paste"
     }
 
     Action {
         id:_zoomin
-        text:qsTr("&ZoomIn")
-        // icon:
+        text:qsTr("&放大")
+        icon.name:"zoom-in"
     }
 
     Action {
         id:_zoomout
-        text:qsTr("&ZoomOut")
-        // icon:
+        text:qsTr("&缩小")
+        icon.name:"zoom-out"
+    }
+
+    Action {
+        id:_fullscreen
+        text:qsTr("&全屏")
+        icon.name:"view-fullscreen"
     }
 }
