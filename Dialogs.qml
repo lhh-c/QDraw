@@ -2,11 +2,15 @@ import QtQuick
 import QtCore
 import QtQuick.Controls
 import QtQuick.Dialogs
+import "draw.js" as Controller
 Item {
     id: root
-        property alias fileOpen: _fileOpen
-        property alias about: _about
-        property alias colorDialog: _colorDialog
+    property alias fileOpen: _fileOpen
+    property alias about: _about
+    property alias colorDialog: _colorDialog
+    property alias fileSave: _fileSave
+    property alias failToSave: _failToSave
+
     FileDialog {
         id: _fileOpen
         title: "Select some draw files"
@@ -33,6 +37,23 @@ Item {
                 // 当用户选择颜色后，可以通过Controller设置颜色
                 Controller.setPenColor(selectedColor)
             }
+        }
+
+        FileDialog {
+            id: _fileSave
+            title: "Give a file name"
+            modality: Qt.ApplicationModal
+            currentFolder: StandardPaths.writableLocation
+                           (StandardPaths.DocumentsLocation)
+            fileMode: FileDialog.SaveFile
+            nameFilters: [ "Audio files (*.mp3 *.wav *.ogg)" ]
+        }
+
+        MessageDialog{
+            id:_failToSave
+            modality: Qt.WindowModal
+            buttons:MessageDialog.Ok
+            text:"Fail to save the file!"
         }
 
 

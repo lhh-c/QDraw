@@ -124,6 +124,7 @@ ApplicationWindow {
         // color.onTriggered:Controller.color()
         about.onTriggered: content.dialogs.about.open();
         // fullscreen.onTriggered:
+        save.onTriggered: Controller.save();
     }
     //Content Area
     Content {
