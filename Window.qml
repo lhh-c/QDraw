@@ -127,7 +127,11 @@ ApplicationWindow {
         // pen.onTriggered:Controller.pen();
         // color.onTriggered:Controller.color()
         about.onTriggered: content.dialogs.about.open();
+<<<<<<< HEAD
         fullscreen.onTriggered:Controller.toggleFullscreen();
+=======
+        // fullscreen.onTriggered:
+>>>>>>> 14234416c01a11f81cf6480ae8f9914b38a52de1
         save.onTriggered: Controller.save();
     }
     //Content Area
