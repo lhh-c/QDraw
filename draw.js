@@ -13,19 +13,37 @@ function setPenColor(color) {
     console.log("画笔颜色已设置为:", color)
 }
 
-function open(){
-    content.dialogs.fileOpen.open()
+// fullscreen实现
+var windowRef = null; // 用于存储窗口引用
+
+function registerWindow(window) {
+    windowRef = window;
+    console.log("窗口引用已注册");
 }
 
-function openPenSizeDialog() {
-    content.dialogs.penSizeDialog.open()
+function toggleFullscreen() {
+    if (!windowRef) {
+        console.error("未获取到窗口引用");
+        return;
+    }
+
+    if (windowRef.visibility === ApplicationWindow.FullScreen) {
+        windowRef.visibility = ApplicationWindow.Windowed;
+        console.log("退出全屏");
+    } else {
+        windowRef.visibility = ApplicationWindow.FullScreen;
+        console.log("进入全屏");
+    }
 }
 
 // 暴露函数给QML
 Qt.include({
     setPenColor: setPenColor,
-    openPenSizeDialog: openPenSizeDialog
-})
+    // openColorDialog: openColorDialog,
+    open: open,
+    // registerWindow: registerWindow,
+    toggleFullscreen: toggleFullscreen
+});
 
 function open(){
     content.dialogs.fileOpen.open()

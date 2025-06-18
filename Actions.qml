@@ -62,15 +62,17 @@ Item {
     Action {
         id:_pen
         text:qsTr("&笔号")
-        icon.name:"draw-pen" // 修改为更合适的图标
-        onTriggered:dialogs.openPenSizeDialog()// 触发打开笔号对话框
+        icon.name:"document-new"
     }
 
     Action {
         id:_color
         text:qsTr("&笔色")
         icon.name: "color-picker" // 可以使用合适的图标
-           onTriggered:dialogs.openColorDialog()
+           onTriggered: {
+               // 触发打开颜色对话框
+               dialogs.openColorDialog()
+           }
     }
 
     Action {
@@ -119,5 +121,7 @@ Item {
         id:_fullscreen
         text:qsTr("&全屏")
         icon.name:"view-fullscreen"
+        shortcut: "F11" // 添加F11快捷键
+        checkable: true
     }
 }
