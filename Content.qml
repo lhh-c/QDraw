@@ -4,6 +4,8 @@ import "draw.js" as Controller
 Item {
     id:content
     anchors.fill: parent
+    rotation: 0 // 旋转角度
+
     property alias dialogs: _dialogs
     // property bool isDrawing: false
     // property point lastPoint: Qt.point(0, 0)
@@ -75,7 +77,6 @@ Item {
     //     }
     // }
 
-<<<<<<< HEAD
     Canvas {
         id: _mycanvas
         anchors.fill: parent
@@ -94,18 +95,6 @@ Item {
             renderTarget: Canvas.FramebufferObject // 确保离屏内容持久化
         }
 
-=======
-    Canvas{
-        id:mycanvas
-        anchors.fill: parent
-
-        property bool isDrawing: false
-        property var lastPoint: Qt.point(0, 0)
-        property point currentPoint: Qt.point(0, 0)  // 新增当前点属性
-        // property color penColor: "black"
-        property real penWidth: 3
-
->>>>>>> 14234416c01a11f81cf6480ae8f9914b38a52de1
         Rectangle {
             anchors.fill: parent
             color: "lightgray"
@@ -114,77 +103,47 @@ Item {
 
         onPaint: {
             var ctx = getContext("2d")
-<<<<<<< HEAD
 
             ctx.drawImage(_bufferCanvas, 0, 0)               //  从离屏Canvas恢复内容
 
             if (isDrawing) {
-                ctx.lineWidth = penWidth
-                ctx.lineCap = "round"
+                ctx.lineWidth = penWidth//线条宽度，后续应该会在ui左侧添加显示的选择区域
+                ctx.lineCap = "round"//线端样式（butt、round、square），这和kolourpaint里面可选择的一样
+                // ctx.lineJoin = "round"//转角样式（miter、round、bevel），还不知道是什么效果
                 ctx.strokeStyle = Controller.currentPenColor
 
+                // 开始绘制路径
                 ctx.beginPath()
                 ctx.moveTo(lastPoint.x, lastPoint.y)
                 var cpx = (lastPoint.x + currentPoint.x) / 2
                 var cpy = (lastPoint.y + currentPoint.y) / 2
                 ctx.quadraticCurveTo(cpx, cpy, currentPoint.x, currentPoint.y)
                 ctx.stroke()
-=======
-            if (isDrawing) {
-            // 设置绘图样式
-            ctx.lineWidth = penWidth//线条宽度，后续应该会在ui左侧添加显示的选择区域
-            ctx.lineCap = "round"//线端样式（butt、round、square），这和kolourpaint里面可选择的一样
-            ctx.lineJoin = "round"//转角样式（miter、round、bevel），还不知道是什么效果
-            ctx.strokeStyle = Controller.currentPenColor
 
-            // 开始绘制路径
-            ctx.beginPath()
-            ctx.moveTo(lastPoint.x, lastPoint.y)
-            ctx.lineTo(currentPoint.x, currentPoint.y)
-            ctx.stroke()
->>>>>>> 14234416c01a11f81cf6480ae8f9914b38a52de1
             }
         }
 
         MouseArea {
-<<<<<<< HEAD
             anchors.fill: parent
             hoverEnabled: true
 
             onPressed: {
                 _mycanvas.isDrawing = true
                 _mycanvas.lastPoint = Qt.point(mouseX, mouseY)
-                _mycanvas.currentPoint = Qt.point(mouseX, mouseY)
+                _mycanvas.currentPoint = Qt.point(mouseX, mouseY)  // 初始化当前点
                 _mycanvas.requestPaint()
             }
 
             onPositionChanged: {
                 if (_mycanvas.isDrawing) {
-                    _mycanvas.lastPoint = _mycanvas.currentPoint
-                    _mycanvas.currentPoint = Qt.point(mouseX, mouseY)
+                    _mycanvas.lastPoint =_mycanvas.currentPoint  // 更新上一个点为当前点
+                    _mycanvas.currentPoint = Qt.point(mouseX, mouseY)  // 更新当前点
                     _mycanvas.requestPaint()
-=======
-            id: mouseArea
-            anchors.fill: parent
 
-            onPressed: {
-                mycanvas.isDrawing = true
-                mycanvas.lastPoint = Qt.point(mouseX, mouseY)
-                mycanvas.currentPoint = Qt.point(mouseX, mouseY)  // 初始化当前点
-                mycanvas.requestPaint()
-            }
-
-            onPositionChanged: {
-                if (mycanvas.isDrawing) {
-                   mycanvas.lastPoint = mycanvas.currentPoint  // 更新上一个点为当前点
-                   mycanvas.currentPoint = Qt.point(mouseX, mouseY)  // 更新当前点
-                   mycanvas.requestPaint()
->>>>>>> 14234416c01a11f81cf6480ae8f9914b38a52de1
                 }
             }
 
             onReleased: {
-<<<<<<< HEAD
                 _mycanvas.isDrawing = false
 
                 var bufferCtx = _bufferCanvas.getContext("2d")          //  将当前内容保存到离屏Canvas
@@ -199,22 +158,9 @@ Item {
                 if (window.visibility === Window.FullScreen) {
                     _mycanvas.requestPaint();
                 }
-=======
-                mycanvas.isDrawing =false
->>>>>>> 14234416c01a11f81cf6480ae8f9914b38a52de1
             }
         }
     }
-
-<<<<<<< HEAD
-=======
-    // ColorDialog{
-
-    // }
->>>>>>> 14234416c01a11f81cf6480ae8f9914b38a52de1
-
-
-
 
     Dialogs{
         id:_dialogs
