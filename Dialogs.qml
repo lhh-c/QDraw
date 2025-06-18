@@ -2,7 +2,9 @@ import QtQuick
 import QtCore
 import QtQuick.Controls
 import QtQuick.Dialogs
+
 import "draw.js" as Controller
+
 Item {
     id: root
     property alias fileOpen: _fileOpen

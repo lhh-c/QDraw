@@ -121,5 +121,7 @@ Item {
         id:_fullscreen
         text:qsTr("&全屏")
         icon.name:"view-fullscreen"
+        shortcut: "F11" // 添加F11快捷键
+        checkable: true
     }
 }

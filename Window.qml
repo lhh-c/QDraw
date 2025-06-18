@@ -101,12 +101,16 @@ ApplicationWindow {
             // 视图操作按钮
             ToolButton {
                 action: actions.fullscreen
-                ToolTip.text: checked ? qsTr("退出全屏") : qsTr("进入全屏")
+                ToolTip.text: action.checked ? qsTr("退出全屏 (F11)") : qsTr("进入全屏 (F11)")
                 ToolTip.visible: hovered
+                icon.name: action.checked ? "view-restore" : "view-fullscreen"
             }
         }
     }
 
+    Component.onCompleted: {
+            Controller.registerWindow(window); // 注册窗口引用
+        }
 
     Actions {
         id: actions
