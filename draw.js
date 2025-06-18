@@ -38,13 +38,16 @@ function toggleFullscreen() {
 
 // 暴露函数给QML
 Qt.include({
-    setPenColor: setPenColor,
-    // openColorDialog: openColorDialog,
-    open: open,
-    // registerWindow: registerWindow,
-    toggleFullscreen: toggleFullscreen
-});
+
+    currentPenColor: currentPenColor,
+    setPenColor: setPenColor
+})
+
 
 function open(){
     content.dialogs.fileOpen.open()
+}
+
+function save(){
+    content.dialogs.fileSave.open()
 }

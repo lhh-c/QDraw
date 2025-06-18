@@ -69,10 +69,10 @@ Item {
         id:_color
         text:qsTr("&笔色")
         icon.name: "color-picker" // 可以使用合适的图标
-           onTriggered: {
-               // 触发打开颜色对话框
-               dialogs.openColorDialog()
-           }
+           // onTriggered: {
+           //     // 触发打开颜色对话框
+           //     dialogs.openColorDialog()
+           // }
     }
 
     Action {
