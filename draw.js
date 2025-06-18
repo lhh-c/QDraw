@@ -51,3 +51,12 @@ function open(){
 function save(){
     content.dialogs.fileSave.open()
 }
+
+// function zoomin(){
+//     content.mycanvas.zoom(1.25)
+// }
+
+// function zoomout(){
+//     content.mycanvas.zoom(0.75)
+// }
+

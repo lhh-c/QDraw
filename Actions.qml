@@ -62,7 +62,7 @@ Item {
     Action {
         id:_pen
         text:qsTr("&笔号")
-        icon.name:"document-new"
+        // icon.name:"document-new"
     }
 
     Action {
@@ -109,6 +109,7 @@ Item {
         id:_zoomin
         text:qsTr("&放大")
         icon.name:"zoom-in"
+        shortcut: StandardKey.ZoomIn
     }
 
     Action {

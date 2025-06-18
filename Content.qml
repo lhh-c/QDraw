@@ -5,6 +5,7 @@ Item {
     id:content
     anchors.fill: parent
     property alias dialogs: _dialogs
+    property alias mycanvas: _mycanvas
     // property bool isDrawing: false
     // property point lastPoint: Qt.point(0, 0)
 
@@ -76,7 +77,7 @@ Item {
     // }
 
     Canvas{
-        id:mycanvas
+        id:_mycanvas
         anchors.fill: parent
 
         property bool isDrawing: false
@@ -84,6 +85,7 @@ Item {
         property point currentPoint: Qt.point(0, 0)  // 新增当前点属性
         // property color penColor: "black"
         property real penWidth: 3
+        property real scaleFactor: 1.0
 
         Rectangle {
             anchors.fill: parent
@@ -91,11 +93,23 @@ Item {
             z: -1
         }
 
+        // 使用transform实现视觉缩放
+        transform: Scale {
+            id: canvasScale
+            origin.x: 0
+            origin.y: 0
+            xScale: _mycanvas.scaleFactor
+            yScale: _mycanvas.scaleFactor
+        }
+
+
         onPaint: {
             var ctx = getContext("2d")
+            ctx.save()//保存当前状态，不然下次缩放的时候缩放的效果会叠加
+
             if (isDrawing) {
             // 设置绘图样式
-            ctx.lineWidth = penWidth//线条宽度，后续应该会在ui左侧添加显示的选择区域
+            ctx.lineWidth = penWidth/scaleFactor//线条宽度，后续应该会在ui左侧添加显示的选择区域  //调整线宽用于适应缩放
             ctx.lineCap = "round"//线端样式（butt、round、square），这和kolourpaint里面可选择的一样
             ctx.lineJoin = "round"//转角样式（miter、round、bevel），还不知道是什么效果
             ctx.strokeStyle = Controller.currentPenColor
@@ -106,29 +120,42 @@ Item {
             ctx.lineTo(currentPoint.x, currentPoint.y)
             ctx.stroke()
             }
+
+            ctx.restore()//恢复状态
+        }
+
+        function zoom(factor) {
+            var newScale = scaleFactor * factor
+            // 限制缩放范围
+            if (newScale > 0.1 && newScale < 10) {
+                scaleFactor = newScale
+                console.log("当前缩放比例:", scaleFactor)
+                requestPaint()
+            }
         }
 
         MouseArea {
             id: mouseArea
             anchors.fill: parent
+            acceptedButtons: Qt.LeftButton
 
-            onPressed: {
-                mycanvas.isDrawing = true
-                mycanvas.lastPoint = Qt.point(mouseX, mouseY)
-                mycanvas.currentPoint = Qt.point(mouseX, mouseY)  // 初始化当前点
-                mycanvas.requestPaint()
+            onPressed:(mouse)=>{
+                _mycanvas.isDrawing = true
+                _mycanvas.lastPoint = Qt.point(mouseX * _mycanvas.scaleFactor, mouseY * _mycanvas.scaleFactor)
+                _mycanvas.currentPoint = Qt.point(mouseX * _mycanvas.scaleFactor, mouseY * _mycanvas.scaleFactor)  // 初始化当前点
+                _mycanvas.requestPaint()
             }
 
-            onPositionChanged: {
-                if (mycanvas.isDrawing) {
-                   mycanvas.lastPoint = mycanvas.currentPoint  // 更新上一个点为当前点
-                   mycanvas.currentPoint = Qt.point(mouseX, mouseY)  // 更新当前点
-                   mycanvas.requestPaint()
+            onPositionChanged: (mouse)=>{
+                if (_mycanvas.isDrawing) {
+                   _mycanvas.lastPoint = _mycanvas.currentPoint  // 更新上一个点为当前点
+                   _mycanvas.currentPoint = Qt.point(mouseX, mouseY)  // 更新当前点
+                   _mycanvas.requestPaint()
                 }
             }
 
             onReleased: {
-                mycanvas.isDrawing =false
+                _mycanvas.isDrawing =false
             }
         }
     }
@@ -137,7 +164,88 @@ Item {
 
     // }
 
+    //可用的版本
+    // Canvas {
+    //     id: _mycanvas
+    //     anchors.fill: parent
 
+    //     property bool isDrawing: false
+    //     property point lastPoint: Qt.point(0, 0)
+    //     property point currentPoint: Qt.point(0, 0)
+    //     property real penWidth: 3
+    //     property real scaleFactor: 1.0
+
+    //     // 使用transform实现视觉缩放
+    //     transform: Scale {
+    //         id: canvasScale
+    //         origin.x: 0
+    //         origin.y: 0
+    //         xScale: _mycanvas.scaleFactor
+    //         yScale: _mycanvas.scaleFactor
+    //     }
+
+    //     Rectangle {
+    //         anchors.fill: parent
+    //         color: "lightgray"
+    //         z: -1
+    //     }
+
+    //     onPaint: {
+    //         var ctx = getContext("2d")
+    //         ctx.save()
+
+    //         //不再使用ctx.scale()，transform已经处理了视觉缩放
+    //         if (isDrawing) {
+    //             ctx.lineWidth = penWidth
+    //             ctx.lineCap = "round"
+    //             ctx.lineJoin = "round"
+    //             ctx.strokeStyle = Controller.currentPenColor
+
+    //             ctx.beginPath()
+    //             ctx.moveTo(lastPoint.x, lastPoint.y)
+    //             ctx.lineTo(currentPoint.x, currentPoint.y)
+    //             ctx.stroke()
+    //         }
+
+    //         ctx.restore()
+    //     }
+
+    //     function zoom(factor) {
+    //         var newScale = scaleFactor * factor
+    //         // 限制缩放范围
+    //         if (newScale > 0.1 && newScale < 10) {
+    //             scaleFactor = newScale
+    //             console.log("当前缩放比例:", scaleFactor)
+    //             requestPaint()
+    //         }
+    //     }
+
+    //     MouseArea {
+    //         id: mouseArea
+    //         anchors.fill: parent
+    //         acceptedButtons: Qt.LeftButton
+
+    //         onPressed: (mouse) => {
+    //             _mycanvas.isDrawing = true
+    //             // 坐标需要除以缩放因子
+    //             _mycanvas.lastPoint = Qt.point(mouse.x / _mycanvas.scaleFactor, mouse.y / _mycanvas.scaleFactor)
+    //             _mycanvas.currentPoint = _mycanvas.lastPoint
+    //             _mycanvas.requestPaint()
+    //         }
+
+    //         onPositionChanged: (mouse) => {
+    //             if (_mycanvas.isDrawing) {
+    //                 _mycanvas.lastPoint = _mycanvas.currentPoint
+    //                 _mycanvas.currentPoint = Qt.point(mouse.x / _mycanvas.scaleFactor, mouse.y / _mycanvas.scaleFactor)
+    //                 _mycanvas.requestPaint()
+    //             }
+    //         }
+
+    //         onReleased: {
+    //             _mycanvas.isDrawing = false
+    //         }
+    //     }
+    // }
 
 
     Dialogs{
