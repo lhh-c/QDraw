@@ -17,6 +17,8 @@ Item {
     property alias paste: _paste
     property alias zoomin: _zoomin
     property alias zoomout: _zoomout
+    property alias counterclockwise: _counterclockwise
+    property alias clockwise: _clockwise
     property alias fullscreen: _fullscreen
     Action {
         id:_open
@@ -115,6 +117,18 @@ Item {
         id:_zoomout
         text:qsTr("&缩小")
         icon.name:"zoom-out"
+    }
+
+    Action {
+        id:_counterclockwise
+        text:qsTr("&左旋")
+        icon.name:"object-rotate-left"
+    }
+
+    Action {
+        id:_clockwise
+        text:qsTr("&右旋")
+        icon.name:"object-rotate-right"
     }
 
     Action {

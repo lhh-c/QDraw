@@ -6,14 +6,12 @@ Item {
     id: content
     anchors.fill: parent
 
-
     property int rotationAngle: 0
     property alias dialogs: _dialogs
     property alias mycanvas: _canvasContainer
     property alias canvas: _mycanvas
     property alias bufferCanvas: _bufferCanvas
 
-    // 黑色背景
     Rectangle {
         id: canvasBackground
         anchors.top: parent.top
@@ -31,6 +29,7 @@ Item {
         height:960
         anchors.top: parent.top
         anchors.left: parent.left
+
 
         Flickable {
             id: flickable
@@ -151,6 +150,7 @@ Item {
             })
         }
     }
+
 
     // 全屏切换时的处理
     Connections {

@@ -9,12 +9,11 @@ function openColorDialog() {
 
 function setPenColor(color) {
     currentPenColor = color
-    // 这里可以添加更新画布颜色的逻辑
     console.log("画笔颜色已设置为:", color)
 }
 
 // fullscreen实现
-var windowRef = null; // 用于存储窗口引用
+var windowRef = null;
 
 function registerWindow(window) {
     windowRef = window;
@@ -47,6 +46,16 @@ Qt.include({
 function open(){
     content.dialogs.fileOpen.open()
 }
+
+function rotateCanvas(angle) {
+    if (content && content.mycanvas) {
+        content.mycanvas.rotateCanvas(angle)
+    } else {
+        console.error("Canvas is unavailable.")
+    }
+}
+
+
 
 function save(){
     content.dialogs.fileSave.open()

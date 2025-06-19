@@ -59,10 +59,16 @@ ApplicationWindow {
             }
             MenuSeparator {}
             MenuItem {
-                action: actions.zoomin//text: qsTr("放大 (+)")
+                action: actions.zoomin  //text: qsTr("放大 (+)")
             }
             MenuItem {
-                action: actions.zoomout//text: qsTr("缩小 (-)")
+                action: actions.zoomout  //text: qsTr("缩小 (-)")
+            }
+            MenuItem {
+                action: actions.counterclockwise  //text: qsTr("左旋")
+            }
+            MenuItem {
+                action: actions.clockwise  //text: qsTr("右旋")
             }
         }
 
@@ -126,6 +132,8 @@ ApplicationWindow {
         // paste.onTriggered:Controller.paste();
         // pen.onTriggered:Controller.pen();
         // color.onTriggered:Controller.color()
+        clockwise.onTriggered: Controller.rotateCanvas(90);
+        counterclockwise.onTriggered: Controller.rotateCanvas(-90);
         about.onTriggered: content.dialogs.about.open();
         fullscreen.onTriggered:Controller.toggleFullscreen();
         save.onTriggered: Controller.save();
