@@ -8,7 +8,6 @@ function openColorDialog() {
 
 function setPenColor(color) {
     content.canvas.penColor = color
-    console.log("画笔颜色已设置为:", color)
 }
 
 // fullscreen实现
@@ -16,7 +15,6 @@ var windowRef = null;
 
 function registerWindow(window) {
     windowRef = window;
-    console.log("窗口引用已注册");
 }
 
 function toggleFullscreen() {

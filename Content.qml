@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "draw.js" as Controller
+
 Item {
     id: content
     anchors.fill: parent
@@ -65,7 +66,7 @@ Item {
                 property var lastPoint: Qt.point(0, 0)  // 上一个绘制点坐标
                 property point currentPoint: Qt.point(0, 0) // 当前绘制点坐标
                 property real penWidth: 3
-                property string penColor : "#fffff"
+                property string penColor : "black"
                 // 离屏缓冲画布
                 Canvas {
                     id: _bufferCanvas
