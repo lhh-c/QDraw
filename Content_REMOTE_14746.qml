@@ -1,11 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "draw.js" as Controller
+
 Item {
     id: content
     anchors.fill: parent
-
 
     property int rotationAngle: 0
     property alias dialogs: _dialogs
@@ -13,7 +12,6 @@ Item {
     property alias canvas: _mycanvas
     property alias bufferCanvas: _bufferCanvas
 
-    // 黑色背景
     Rectangle {
         id: canvasBackground
         anchors.top: parent.top
@@ -31,6 +29,7 @@ Item {
         height:960
         anchors.top: parent.top
         anchors.left: parent.left
+
 
         Flickable {
             id: flickable
@@ -65,7 +64,7 @@ Item {
                 property var lastPoint: Qt.point(0, 0)  // 上一个绘制点坐标
                 property point currentPoint: Qt.point(0, 0) // 当前绘制点坐标
                 property real penWidth: 3
-                property string penColor : "#fffff"
+
                 // 离屏缓冲画布
                 Canvas {
                     id: _bufferCanvas
@@ -87,7 +86,7 @@ Item {
                     if (isDrawing) {
                         ctx.lineWidth = penWidth
                         ctx.lineCap = "round"
-                        ctx.strokeStyle = penColor
+                        ctx.strokeStyle = "black"
 
                         ctx.beginPath()
                         ctx.moveTo(lastPoint.x, lastPoint.y)
@@ -151,6 +150,7 @@ Item {
             })
         }
     }
+
 
     // 全屏切换时的处理
     Connections {

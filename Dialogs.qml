@@ -2,13 +2,17 @@ import QtQuick
 import QtCore
 import QtQuick.Controls
 import QtQuick.Dialogs
-import QtQuick.Layouts
+
+import "draw.js" as Controller
+
 Item {
     id: root
     property alias fileOpen: _fileOpen
     property alias about: _about
     property alias colorDialog: _colorDialog
-    property alias penSizeDialog: _penSizeDialog
+    property alias fileSave: _fileSave
+    property alias failToSave: _failToSave
+
     FileDialog {
         id: _fileOpen
         title: "Select some draw files"
@@ -37,28 +41,22 @@ Item {
             }
         }
 
-        // 笔号设置对话框
-        Dialog {
-                id: _penSizeDialog
-                title: "设置笔号"
-                standardButtons: Dialog.Ok | Dialog.Cancel
+        FileDialog {
+            id: _fileSave
+            title: "Give a file name"
+            modality: Qt.ApplicationModal
+            currentFolder: StandardPaths.writableLocation
+                           (StandardPaths.DocumentsLocation)
+            fileMode: FileDialog.SaveFile
+            nameFilters: [ "Audio files (*.mp3 *.wav *.ogg)" ]
+        }
 
-                ColumnLayout {
-                    spacing: 10
-                    anchors.fill: parent
+        MessageDialog{
+            id:_failToSave
+            modality: Qt.WindowModal
+            buttons:MessageDialog.Ok
+            text:"Fail to save the file!"
+        }
 
-                    ComboBox {
-                        id: penSizeCombo
-                        model: ["细笔", "中笔", "粗笔"]
-                        Layout.fillWidth: true
-                    }
-
-                    Label {
-                        text: "当前选择: " + penSizeCombo.currentText
-                        horizontalAlignment: Text.AlignHCenter
-                        Layout.fillWidth: true
-                    }
-                }
-            }
 
 }

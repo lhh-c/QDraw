@@ -7,8 +7,8 @@ import "draw.js" as Controller
 
 ApplicationWindow {
     id: window
-    width: 640
-    height: 480
+    width: 960
+    height: 960
     visible: true
 
     // 菜单栏定义
@@ -59,10 +59,16 @@ ApplicationWindow {
             }
             MenuSeparator {}
             MenuItem {
-                action: actions.zoomin//text: qsTr("放大 (+)")
+                action: actions.zoomin  //text: qsTr("放大 (+)")
             }
             MenuItem {
-                action: actions.zoomout//text: qsTr("缩小 (-)")
+                action: actions.zoomout  //text: qsTr("缩小 (-)")
+            }
+            MenuItem {
+                action: actions.counterclockwise  //text: qsTr("左旋")
+            }
+            MenuItem {
+                action: actions.clockwise  //text: qsTr("右旋")
             }
         }
 
@@ -101,18 +107,21 @@ ApplicationWindow {
             // 视图操作按钮
             ToolButton {
                 action: actions.fullscreen
-                ToolTip.text: checked ? qsTr("退出全屏") : qsTr("进入全屏")
+                ToolTip.text: action.checked ? qsTr("退出全屏 (F11)") : qsTr("进入全屏 (F11)")
                 ToolTip.visible: hovered
+                icon.name: action.checked ? "view-restore" : "view-fullscreen"
             }
         }
     }
 
+    Component.onCompleted: {
+            Controller.registerWindow(window); // 注册窗口引用
+        }
 
     Actions {
         id: actions
         open.onTriggered:Controller.open();
         color.onTriggered: Controller.openColorDialog() // 绑定颜色动作
-        pen.onTriggered: Controller.openPenSizeDialog()
         // newFile.onTriggered:Controller.newfile();
         // close.onTriggered:Controller.close();
         // quit.conTriggered:Controller.quit();
@@ -123,8 +132,11 @@ ApplicationWindow {
         // paste.onTriggered:Controller.paste();
         // pen.onTriggered:Controller.pen();
         // color.onTriggered:Controller.color()
+        clockwise.onTriggered: Controller.rotateCanvas(90);
+        counterclockwise.onTriggered: Controller.rotateCanvas(-90);
         about.onTriggered: content.dialogs.about.open();
-        // fullscreen.onTriggered:
+        fullscreen.onTriggered:Controller.toggleFullscreen();
+        save.onTriggered: Controller.save();
     }
     //Content Area
     Content {
