@@ -7,8 +7,8 @@ import "draw.js" as Controller
 
 ApplicationWindow {
     id: window
-    width: 640
-    height: 400
+    width:2560
+    height: 1440
     visible: true
 
     // 菜单栏定义
@@ -129,8 +129,8 @@ ApplicationWindow {
         about.onTriggered: content.dialogs.about.open();
         fullscreen.onTriggered:Controller.toggleFullscreen();
         save.onTriggered: Controller.save();
-        zoomin.onTriggered:content.mycanvas.zoom(1.25);
-        zoomout.onTriggered: content.mycanvas.zoom(0.75);
+        zoomin.onTriggered:content.zoom(1.2);
+        zoomout.onTriggered: content.zoom(0.8);
     }
     //Content Area
     Content {
