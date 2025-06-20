@@ -10,6 +10,66 @@ function openColorDialog() {
 function setPenColor(color) {
 
     content.penColor = color
+}
+
+// 单例组件管理器
+var WindowManager = {
+    component: null,
+    instances: [],
+
+    initialize: function() {
+        if (!this.component) {
+            this.component = Qt.createComponent("Window.qml");
+            if (this.component.status === Component.Error) {
+                console.error("组件创建失败:", this.component.errorString());
+            }
+        }
+    },
+
+    createWindow: function(properties) {
+        if (!this.component || this.component.status !== Component.Ready) {
+            console.warn("组件未就绪，尝试初始化...");
+            this.initialize();
+            return null;
+        }
+
+        var win = this.component.createObject(null, properties);
+        if (win) {
+            this.instances.push(win);
+            win.closing.connect(function() {
+                WindowManager.removeWindow(win);
+            });
+        }
+        return win;
+    },
+
+    removeWindow: function(win) {
+        var index = this.instances.indexOf(win);
+        if (index >= 0) {
+            this.instances.splice(index, 1);
+        }
+    }
+};
+
+// 初始化组件
+WindowManager.initialize();
+
+// 对外接口
+function createNewWindow() {
+    return WindowManager.createWindow({
+        isPrimaryWindow: false,
+        width: 1280,
+        height: 800,
+        title: "绘图窗口 "
+    });
+}
+
+// 注册窗口函数
+function registerWindow(window) {
+    windowInstances.push(window);
+    window.closing.connect(function() {
+        windowClosed(window);
+    });
 
 }
 
