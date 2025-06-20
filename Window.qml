@@ -7,8 +7,8 @@ import "draw.js" as Controller
 
 ApplicationWindow {
     id: window
-    width: 2560
-    height: 1440
+    width: 840
+    height: 840
     visible: true
     title:"绘图窗口"
 
@@ -137,7 +137,7 @@ ApplicationWindow {
         // cut.onTriggered:Controller.cut();
         // copy.onTriggered:Controller.copy();
         // paste.onTriggered:Controller.paste();
-        // pen.onTriggered:Controller.pen();
+        pen.onTriggered:Controller.openPenSizeDialog();
         // color.onTriggered:Controller.color()
         clockwise.onTriggered: Controller.rotateCanvas(90);
         counterclockwise.onTriggered: Controller.rotateCanvas(-90);

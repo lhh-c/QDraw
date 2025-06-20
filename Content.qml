@@ -127,9 +127,28 @@ Item {
                 anchors.fill: parent
 
                 function screenToCanvas(x, y) {
-                    console.log(x+" "+y)//可以得知这里的x,y是相对于画布的坐标
-                    return Qt.point(x, y)
-                }
+                // 1. 获取鼠标在画布上的原始坐标
+                var canvasPos = _mycanvas.mapFromItem(mouseArea, x, y);
+
+                // 2. 转换为相对于旋转中心的坐标
+                var centerX = _mycanvas.width / 2;
+                var centerY = _mycanvas.height / 2;
+                var point = Qt.point(canvasPos.x - centerX, canvasPos.y - centerY);
+
+                // 3. 应用逆旋转（关键修正：使用正角度）
+                var rad = rotationAngle * Math.PI / 180;  // 注意这里是正角度
+                var cos = Math.cos(rad);
+                var sin = Math.sin(rad);
+                var x1 = point.x * cos + point.y * sin;  // 注意这里是+号
+                var y1 = -point.x * sin + point.y * cos; // 注意这里是-号
+
+                // 4. 应用逆缩放
+                x1 = x1 / scale;
+                y1 = y1 / scale;
+
+                // 5. 转换回绝对坐标
+                return Qt.point(x1 + centerX, y1 + centerY);
+            }
 
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 hoverEnabled: true//启用以接收滚轮事件
