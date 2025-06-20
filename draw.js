@@ -2,6 +2,7 @@ function func() {
 
 }
 
+//笔色实现
 function openColorDialog() {
     content.dialogs.colorDialog.open()
 }
@@ -10,6 +11,15 @@ function setPenColor(color) {
 
     content.penColor = color
 
+}
+
+//笔号实现
+function openPenSizeDialog() {
+    content.dialogs.penSizeDialog.open()
+}
+
+function setPenSize(size) {
+    content.penWidth = size
 }
 
 // fullscreen实现
