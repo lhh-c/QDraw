@@ -22,7 +22,7 @@ function setPenSize(size) {
     content.penWidth = size
 }
 
-// fullscreen实现
+// 全屏实现
 var windowRef = null;
 
 function registerWindow(window) {
@@ -63,6 +63,37 @@ function save(){
     content.dialogs.fileSave.open()
 }
 
+// 撤销实现
+function undo() {
+    if (content.undoStack.length > 0) {
+        // 当前状态存入重做栈
+        content.redoStack.push(JSON.parse(JSON.stringify(content.paths)))
+
+        // 恢复上一个状态
+        content.paths = JSON.parse(JSON.stringify(content.undoStack.pop()))
+
+        // 重绘画布
+        var bufferCtx = content.bufferCanvas.getContext("2d")
+        bufferCtx.clearRect(0, 0, content.canvas.width, content.canvas.height)
+        content.canvas.requestPaint()
+    }
+}
+
+// 重做实现
+function redo() {
+    if (content.redoStack.length > 0) {
+        // 当前状态存入撤销栈
+        content.undoStack.push(JSON.parse(JSON.stringify(content.paths)))
+
+        // 恢复重做状态
+        content.paths = JSON.parse(JSON.stringify(content.redoStack.pop()))
+
+        // 重绘画布
+        var bufferCtx = content.bufferCanvas.getContext("2d")
+        bufferCtx.clearRect(0, 0, content.canvas.width, content.canvas.height)
+        content.canvas.requestPaint()
+    }
+}
 // function zoomin(){
 //     content.mycanvas.zoom(1.25)
 // }

@@ -125,8 +125,8 @@ ApplicationWindow {
         // newFile.onTriggered:Controller.newfile();
         // close.onTriggered:Controller.close();
         // quit.conTriggered:Controller.quit();
-        // undo.onTriggered:Controller.undo();
-        // redo.onTriggered:Controller.redo();
+        undo.onTriggered:Controller.undo();
+        redo.onTriggered:Controller.redo();
         // cut.onTriggered:Controller.cut();
         // copy.onTriggered:Controller.copy();
         // paste.onTriggered:Controller.paste();

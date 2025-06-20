@@ -12,6 +12,10 @@ Item {
     property alias canvas: _mycanvas
     property alias bufferCanvas: _bufferCanvas
 
+    property var undoStack: []
+    property var redoStack: []
+    property int maxUndoSteps: 20 // 最大撤销步数
+
     // 视图控制属性
     property real scale: 1.0
     property point viewOffset: Qt.point(0, 0)
@@ -32,6 +36,12 @@ Item {
         anchors.fill: parent
         color: "gray"
         z: -1
+    }
+
+    // 在Content.qml的根Item中添加
+    function zoom(factor) {
+        scale = Math.max(0.1, Math.min(scale * factor, 10))
+        _mycanvas.requestPaint()
     }
 
     // 画布容器
@@ -160,20 +170,32 @@ Item {
                     }
                 }
 
+
                 onReleased: {
                     if (isDrawing && content.currentPath.points.length > 1) {
+                            // 保存当前状态到撤销栈
+                            content.undoStack.push(JSON.parse(JSON.stringify(content.paths)))//深拷贝 paths 数组，避免引用传递导致数据污染
+                            if (content.undoStack.length > content.maxUndoSteps) {
+                                content.undoStack.shift() // 限制栈大小
+                            }
+
+                        content.redoStack = []// 清空重做栈
+
+                        // 保存当前路径
                         content.paths.push({
                             "points": content.currentPath.points,
                             "width": content.currentPath.width,
                             "color": Qt.rgba(content.currentPath.color.r, content.currentPath.color.g,
                                            content.currentPath.color.b, content.currentPath.color.a)
                         })
+                        // 重置当前路径
                         content.currentPath = {
                             "points": [],
                             "width": content.penWidth,
                             "color": Qt.rgba(content.penColor.r, content.penColor.g,
                                            content.penColor.b, content.penColor.a)
                         }
+                        // 更新缓冲画布
                         var bufferCtx = _bufferCanvas.getContext("2d")
                         bufferCtx.drawImage(_mycanvas, 0, 0)
                     }
@@ -199,11 +221,6 @@ Item {
                 _mycanvas.requestPaint()
             })
         }
-    }
-
-    function zoom(factor) {
-        scale = Math.max(0.1, Math.min(scale * factor, 10))
-        _mycanvas.requestPaint()
     }
 
     Connections {

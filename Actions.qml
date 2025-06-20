@@ -81,12 +81,14 @@ Item {
         id:_undo
         text:qsTr("&撤销")
         icon.name:"edit-undo"
+        shortcut: StandardKey.Undo // 添加Ctrl+Z快捷键
     }
 
     Action {
         id:_redo
         text:qsTr("&重画")
         icon.name:"edit-redo"
+        shortcut: StandardKey.Redo // 添加Ctrl+Y快捷键
     }
 
     Action {
