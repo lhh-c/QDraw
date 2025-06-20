@@ -15,6 +15,10 @@ Item {
     function globalScreenToCanvas(x, y) {
             return drawarea.screenToCanvas(x, y);
         }
+    //用于实现撤销
+    property var undoStack: []
+    property var redoStack: []
+    property int maxUndoSteps: 20 // 最大撤销步数
 
     //视图控制属性
     property real scale: 1.0
@@ -183,12 +187,18 @@ Item {
                         _mycanvas.requestPaint();
                     }
                     else if (drawarea.isDrawing) {
-                        if (content.currentPath.points.length > 1) {
+                        if (content.currentPath.points.length >= 1) {
                             content.paths.push({
                                 "points": content.currentPath.points,
                                 "width": content.currentPath.width,
                                 "color": Qt.rgba(content.currentPath.color.r,content.currentPath.color.g,content.currentPath.color.b,content.currentPath.color.a)
                             });
+
+                            content.undoStack.push(JSON.parse(JSON.stringify(content.paths)));
+                            if (content.undoStack.length > content.maxUndoSteps) {
+                                content.undoStack.shift();
+                            }
+                            content.redoStack = [];
 
                             //重置当前路径
                             content.currentPath = {
@@ -251,6 +261,16 @@ Item {
     }
 
     property url songUrl
+
+    Connections {
+            target: window
+            function onVisibilityChanged() {
+                if (window.visibility === Window.FullScreen) {
+                    _mycanvas.requestPaint();
+                }
+            }
+        }
+
     Dialogs {
         id: _dialogs
         fileOpen.onRejected: {

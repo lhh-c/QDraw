@@ -11,6 +11,9 @@ ApplicationWindow {
     height: 840
     visible: true
 
+    // 添加窗口标识属性
+    property bool isPrimaryWindow: true
+
     //菜单栏定义
     menuBar: MenuBar {
         //文件菜单
@@ -115,12 +118,12 @@ ApplicationWindow {
     Actions {
         id: actions
         open.onTriggered:Controller.open();
-        color.onTriggered: Controller.openColorDialog() //绑定颜色动作
-        // newFile.onTriggered:Controller.newfile();
+        color.onTriggered: Controller.openColorDialog(); //绑定颜色动作
+        newfile.onTriggered:Controller.createNewWindow();
         // close.onTriggered:Controller.close();
         // quit.conTriggered:Controller.quit();
-        // undo.onTriggered:Controller.undo();
-        // redo.onTriggered:Controller.redo();
+        undo.onTriggered:Controller.undo();
+        redo.onTriggered:Controller.redo();
         cut.onTriggered:Controller.cut();
         copy.onTriggered:Controller.copy();
         paste.onTriggered:Controller.paste();
@@ -139,6 +142,7 @@ ApplicationWindow {
         id:content
         anchors.fill: parent
     }
+
 }
 
 
