@@ -103,18 +103,21 @@ Item {
         id:_cut
         text:qsTr("&剪切")
         icon.name:"edit-cut"
+        shortcut: "ctrl+x"
     }
 
     Action {
         id:_copy
         text:qsTr("&复制")
         icon.name:"edit-copy"
+        shortcut: "ctrl+c"
     }
 
     Action {
         id:_paste
         text:qsTr("&粘贴")
         icon.name:"edit-paste"
+        shortcut: "ctrl+v"
     }
 
     Action {

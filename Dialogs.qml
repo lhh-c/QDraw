@@ -32,30 +32,30 @@ Item {
         detailedText: "Copyright©Haihua Long,Boji Cheng,Cheng Bo(email:2560197809@qq.com)"
     }
 
-    // 颜色选择对话框
+    //颜色选择对话框
     ColorDialog {
         id: _colorDialog
         title: "选择画笔颜色"
         onAccepted: {
-            // 当用户选择颜色后，可以通过Controller设置颜色
+            //当用户选择颜色后，可以通过Controller设置颜色
             Controller.setPenColor(selectedColor)
         }
     }
 
-    // 笔号选择对话框
+    //笔号选择对话框
     Dialog {
         id: _penSizeDialog
         title: "选择笔号大小"
         modal: true
         standardButtons: Dialog.Ok | Dialog.Cancel
 
-        property int selectedSize: 3 // 默认值 (1-5范围)
+        property int selectedSize: 3 //默认值(1-5范围)
 
         ColumnLayout {
             anchors.fill: parent
             spacing: 15
 
-            // 滑块控件
+            //滑块控件
             Slider {
                 id: penSizeSlider
                 from: 1
@@ -72,7 +72,7 @@ Item {
                 }
             }
 
-            // 显示当前笔号大小
+            //显示当前笔号大小
             Label {
                 id: sizeDisplay
                 text: "当前大小: " + _penSizeDialog.selectedSize + "px"

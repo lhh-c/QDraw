@@ -15,9 +15,9 @@ ApplicationWindow {
     // 添加窗口标识属性
     property bool isPrimaryWindow: true
 
-    // 菜单栏定义
+    //菜单栏定义
     menuBar: MenuBar {
-        // 文件菜单
+        //文件菜单
         Menu {
             title: qsTr("文件")
         MenuItem {
@@ -27,7 +27,7 @@ ApplicationWindow {
                 ToolTip.visible: hovered}
             MenuItem {
                 action: actions.open}
-            MenuSeparator {}  // 分隔线
+            MenuSeparator {}  //分隔线
             MenuItem {
                 action: actions.save}
             MenuItem {
@@ -37,7 +37,7 @@ ApplicationWindow {
                 action: actions.quit }
         }
 
-        // 编辑菜单
+        //编辑菜单
         Menu {
             title: qsTr("编辑")
             MenuItem{action:actions.pen}//之后将会做成点击之后弹出一个对话框用于笔号的选择
@@ -81,7 +81,6 @@ ApplicationWindow {
             }
         }
 
-        // 帮助菜单
         Menu {
             title: qsTr("帮助")
             MenuItem {
@@ -89,20 +88,15 @@ ApplicationWindow {
         }
     }
 
-    // 工具栏定义
     header: ToolBar {
         RowLayout {
             anchors.fill: parent
-
-            // 文件操作按钮组
             ToolButton { action: actions.newfile }
             ToolButton { action: actions.open }
             ToolButton { action: actions.save }
 
-            // 分隔条
+            //分隔条
             ToolSeparator {}
-
-            // 编辑操作按钮组
             ToolButton { action: actions.undo }
             ToolButton { action: actions.redo }
             ToolButton { action: actions.deleteall }
@@ -111,10 +105,10 @@ ApplicationWindow {
             ToolButton { action: actions.copy }
             ToolButton { action: actions.paste }
 
-            // 右侧对齐的空间占位
+            //右侧对齐的空间占位
             Item { Layout.fillWidth: true }
 
-            // 视图操作按钮
+            //视图操作按钮
             ToolButton {
                 action: actions.fullscreen
                 ToolTip.text: action.checked ? qsTr("退出全屏 (F11)") : qsTr("进入全屏 (F11)")
@@ -124,23 +118,19 @@ ApplicationWindow {
         }
     }
 
-    // Component.onCompleted: {
-    //         Controller.registerWindow(window); // 注册窗口引用
-    //     }
-
     Actions {
         id: actions
         open.onTriggered:Controller.open();
-        color.onTriggered: Controller.openColorDialog() // 绑定颜色动作
-        newfile.onTriggered:Controller.createNewWindow()
+        color.onTriggered: Controller.openColorDialog(); //绑定颜色动作
+        newfile.onTriggered:Controller.createNewWindow();
         // close.onTriggered:Controller.close();
         // quit.conTriggered:Controller.quit();
         undo.onTriggered:Controller.undo();
         redo.onTriggered:Controller.redo();
         deleteall.onTriggered:Controller.deleteall();
-        // cut.onTriggered:Controller.cut();
-        // copy.onTriggered:Controller.copy();
-        // paste.onTriggered:Controller.paste();
+        cut.onTriggered:Controller.cut();
+        copy.onTriggered:Controller.copy();
+        paste.onTriggered:Controller.paste();
         pen.onTriggered:Controller.openPenSizeDialog();
         // color.onTriggered:Controller.color()
         clockwise.onTriggered: Controller.rotateCanvas(90);
@@ -156,10 +146,10 @@ ApplicationWindow {
         id:content
         anchors.fill: parent
     }
-
     Component.onCompleted: {
         Controller.registerWindow(window); // 注册窗口引用
     }
+
 }
 
 
