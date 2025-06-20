@@ -10,6 +10,7 @@ ApplicationWindow {
     width: 840
     height: 840
     visible: true
+    title:"绘图窗口"
 
     // 添加窗口标识属性
     property bool isPrimaryWindow: true
@@ -20,7 +21,10 @@ ApplicationWindow {
         Menu {
             title: qsTr("文件")
         MenuItem {
-                action: actions.newfile}
+                action: actions.newfile
+                // 添加提示文本
+                ToolTip.text: qsTr("新建窗口 (Ctrl+N)")
+                ToolTip.visible: hovered}
             MenuItem {
                 action: actions.open}
             MenuSeparator {}  //分隔线
@@ -111,10 +115,6 @@ ApplicationWindow {
         }
     }
 
-    Component.onCompleted: {
-            Controller.registerWindow(window); //注册窗口引用
-        }
-
     Actions {
         id: actions
         open.onTriggered:Controller.open();
@@ -141,6 +141,9 @@ ApplicationWindow {
     Content {
         id:content
         anchors.fill: parent
+    }
+    Component.onCompleted: {
+        Controller.registerWindow(window); // 注册窗口引用
     }
 
 }

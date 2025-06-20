@@ -58,7 +58,7 @@ Item {
     Action {
         id:_newfile
         text:qsTr("&新建")
-        icon.name:"document-new"
+        icon.name:"window-new"
     }
 
     Action {
@@ -81,14 +81,14 @@ Item {
         id:_undo
         text:qsTr("&撤销")
         icon.name:"edit-undo"
-        shortcut: "ctrl+z"
+        shortcut: StandardKey.Undo // 添加Ctrl+Z快捷键
     }
 
     Action {
         id:_redo
         text:qsTr("&重画")
         icon.name:"edit-redo"
-        shortcut: "ctrl+shift+z"
+        shortcut: StandardKey.Redo // 添加Ctrl+Y快捷键
     }
 
     Action {

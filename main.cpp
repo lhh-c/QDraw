@@ -6,6 +6,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
+    engine.globalObject().setProperty("applicationInitialized", true);
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,
