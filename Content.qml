@@ -6,29 +6,39 @@ Item {
     id: content
     anchors.fill: parent
 
-
     property int rotationAngle: 0
     property alias dialogs: _dialogs
     property alias mycanvas: _canvasContainer
     property alias canvas: _mycanvas
     property alias bufferCanvas: _bufferCanvas
 
+    // 视图控制属性
+    property real scale: 1.0
+    property point viewOffset: Qt.point(0, 0)
+    property color penColor: "black"
+    property real penWidth: 3
+
+    // 路径数据 - 提升到根Item作用域
+    property var paths: []
+    property var currentPath: ({
+        "points": [],
+        "width": penWidth,
+        "color": Qt.rgba(penColor.r, penColor.g, penColor.b, penColor.a)
+    })
+
     // 黑色背景
     Rectangle {
         id: canvasBackground
-        anchors.top: parent.top
-        anchors.left: parent.left
-        width: parent.width
-        height: parent.height
-        color: "black"
+        anchors.fill: parent
+        color: "gray"
         z: -1
     }
 
-    // 旋转后的实际内容区域容器
+    // 画布容器
     Item {
         id: _canvasContainer
-        width: 960
-        height:960
+        width: 840
+        height: 840
         anchors.top: parent.top
         anchors.left: parent.left
 
@@ -38,38 +48,33 @@ Item {
             contentWidth: _mycanvas.width
             contentHeight: _mycanvas.height
 
-            // 结合放缩，滚动条待完善
-            // ScrollBar.horizontal: ScrollBar {
-            //     id: hbar
-            //     policy: flickable.contentWidth > flickable.width ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-            // }
-
-            // ScrollBar.vertical: ScrollBar {
-            //     id: vbar
-            //     policy: flickable.contentHeight > flickable.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-            // }
-
-
             Canvas {
                 id: _mycanvas
                 width: _canvasContainer.width
                 height: _canvasContainer.height
-                // 旋转变换
-                transform: Rotation {
-                    origin.x: _mycanvas.width / 2
-                    origin.y: _mycanvas.height / 2
-                    angle: content.rotationAngle
-                }
+
+                transform: [
+                    Rotation {
+                        origin.x: _mycanvas.width / 2
+                        origin.y: _mycanvas.height / 2
+                        angle: content.rotationAngle
+                    },
+                    Scale {
+                        xScale: scale
+                        yScale: scale
+                        origin.x: viewOffset.x
+                        origin.y: viewOffset.y
+                    }
+                ]
 
                 property bool isDrawing: false
-                property var lastPoint: Qt.point(0, 0)  // 上一个绘制点坐标
-                property point currentPoint: Qt.point(0, 0) // 当前绘制点坐标
-                property real penWidth: 3
+                property var lastPoint: Qt.point(0, 0)
+                property point currentMousePos: Qt.point(0, 0)
 
                 // 离屏缓冲画布
                 Canvas {
                     id: _bufferCanvas
-                    visible: false  // 不可见
+                    visible: false
                     anchors.fill: parent
                     renderTarget: Canvas.FramebufferObject
                 }
@@ -82,65 +87,109 @@ Item {
 
                 onPaint: {
                     var ctx = getContext("2d")
+                    ctx.clearRect(0, 0, width, height)
                     ctx.drawImage(_bufferCanvas, 0, 0)
 
-                    if (isDrawing) {
-                        ctx.lineWidth = penWidth
-                        ctx.lineCap = "round"
-                        ctx.strokeStyle = "black"
+                    // 应用缩放和平移
+                    ctx.save()
+
+                    // 实时绘制当前笔迹
+                    function drawPath(points, width, color) {
+                        ctx.lineWidth = width//线条宽度，后续应该会在ui左侧添加显示的选择区域  //调整线宽用于适应缩放
+                        ctx.lineCap = "round"//线端样式（butt、round、square），这和kolourpaint里面可选择的一样
+                        ctx.lineJoin = "round"//转角样式（miter、round、bevel），还不知道是什么效果
+                        ctx.strokeStyle = color
 
                         ctx.beginPath()
-                        ctx.moveTo(lastPoint.x, lastPoint.y)
-
-                        var cpx = (lastPoint.x + currentPoint.x) / 2
-                        var cpy = (lastPoint.y + currentPoint.y) / 2
-
-                        ctx.quadraticCurveTo(cpx, cpy, currentPoint.x, currentPoint.y)
+                        ctx.moveTo(points[0].x, points[0].y)
+                        for (var i = 1; i < points.length; i++) {
+                            ctx.lineTo(points[i].x, points[i].y)
+                        }
                         ctx.stroke()
+                    }
+
+                    // 绘制所有已完成路径
+                    for (var i = 0; i < content.paths.length; i++) {
+                        var path = content.paths[i]
+                        drawPath(path.points, path.width, path.color)
+                    }
+
+                    // 绘制当前路径
+                    if (content.currentPath.points.length > 1) {
+                        drawPath(content.currentPath.points, content.currentPath.width, content.currentPath.color)
+                    }
+                    ctx.restore()
+                }
+            }
+
+            MouseArea {
+                id: mouseArea
+                anchors.fill: parent
+
+                function screenToCanvas(x, y) {
+                    console.log(x+" "+y)//可以得知这里的x,y是相对于画布的坐标
+                    return Qt.point(x, y)
+                }
+
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                hoverEnabled: true//启用以接收滚轮事件
+                property bool isDrawing: false
+
+                onWheel: function(wheel) {
+                    var factor = wheel.angleDelta.y > 0 ? 1.1 : 0.9
+                    content.zoom(factor)
+                    _mycanvas.requestPaint()
+                }
+
+                onPressed: (mouse) => {
+                    isDrawing = true
+                    var pos = screenToCanvas(mouse.x, mouse.y)
+                    content.currentPath = {
+                        "points": [pos],
+                        "width": content.penWidth,
+                        "color": Qt.rgba(content.penColor.r, content.penColor.g, content.penColor.b, content.penColor.a)
+                    }
+                    _mycanvas.requestPaint()
+                }
+
+                onPositionChanged: (mouse) => {
+                    if (isDrawing) {
+                        var pos = screenToCanvas(mouse.x, mouse.y)
+                        content.currentPath.points.push(pos)
+                        _mycanvas.requestPaint()
                     }
                 }
 
-                // 鼠标区域
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    acceptedButtons: Qt.LeftButton
-
-
-                    onPressed: {
-                        _mycanvas.isDrawing = true
-                        _mycanvas.lastPoint = Qt.point(mouseX, mouseY)
-                        _mycanvas.currentPoint = Qt.point(mouseX, mouseY)
-                        _mycanvas.requestPaint()
-                    }
-
-                    onPositionChanged: {
-                        if (_mycanvas.isDrawing) {
-                            _mycanvas.lastPoint = _mycanvas.currentPoint
-                            _mycanvas.currentPoint = Qt.point(mouseX, mouseY)
-                            _mycanvas.requestPaint()
+                onReleased: {
+                    if (isDrawing && content.currentPath.points.length > 1) {
+                        content.paths.push({
+                            "points": content.currentPath.points,
+                            "width": content.currentPath.width,
+                            "color": Qt.rgba(content.currentPath.color.r, content.currentPath.color.g,
+                                           content.currentPath.color.b, content.currentPath.color.a)
+                        })
+                        content.currentPath = {
+                            "points": [],
+                            "width": content.penWidth,
+                            "color": Qt.rgba(content.penColor.r, content.penColor.g,
+                                           content.penColor.b, content.penColor.a)
                         }
-                    }
-
-                    // 鼠标释放事件
-                    onReleased: {
-                        _mycanvas.isDrawing = false
                         var bufferCtx = _bufferCanvas.getContext("2d")
                         bufferCtx.drawImage(_mycanvas, 0, 0)
                     }
+                    isDrawing = false
                 }
             }
         }
 
-        // 旋转函数
         function rotateCanvas(angle) {
-            var newAngle = rotationAngle + angle
+            var newAngle = content.rotationAngle + angle
             if (newAngle < 0) newAngle += 360
 
             var bufferCtx = _bufferCanvas.getContext("2d")
             bufferCtx.drawImage(_mycanvas, 0, 0)
 
-            rotationAngle = newAngle
+            content.rotationAngle = newAngle
 
             Qt.callLater(() => {
                 _mycanvas.width = _canvasContainer.width
@@ -152,7 +201,11 @@ Item {
         }
     }
 
-    // 全屏切换时的处理
+    function zoom(factor) {
+        scale = Math.max(0.1, Math.min(scale * factor, 10))
+        _mycanvas.requestPaint()
+    }
+
     Connections {
         target: window
         function onVisibilityChanged() {
@@ -162,20 +215,15 @@ Item {
         }
     }
 
-    // 对话框组件
     Dialogs {
         id: _dialogs
         fileOpen.onRejected: {
             return;
         }
 
-        // 文件打开对话框接受事件
         fileOpen {
             onAccepted: {
-                // 这里可以添加文件打开后的处理逻辑
-                // let filePath = fileOpen.selectedFile;
-                // content.player.video.source = filePath;
-                // content.player.video.play()
+                // 文件打开处理逻辑
             }
         }
     }

@@ -1,15 +1,15 @@
 function func() {
 
 }
-var currentPenColor = "black" // 默认颜色
 
 function openColorDialog() {
     content.dialogs.colorDialog.open()
 }
 
 function setPenColor(color) {
-    currentPenColor = color
-    console.log("画笔颜色已设置为:", color)
+
+    content.penColor = color
+
 }
 
 // fullscreen实现
@@ -17,7 +17,6 @@ var windowRef = null;
 
 function registerWindow(window) {
     windowRef = window;
-    console.log("窗口引用已注册");
 }
 
 function toggleFullscreen() {
@@ -34,13 +33,6 @@ function toggleFullscreen() {
         console.log("进入全屏");
     }
 }
-
-// 暴露函数给QML
-Qt.include({
-
-    currentPenColor: currentPenColor,
-    setPenColor: setPenColor
-})
 
 
 function open(){
@@ -60,3 +52,12 @@ function rotateCanvas(angle) {
 function save(){
     content.dialogs.fileSave.open()
 }
+
+// function zoomin(){
+//     content.mycanvas.zoom(1.25)
+// }
+
+// function zoomout(){
+//     content.mycanvas.zoom(0.75)
+// }
+

@@ -137,6 +137,8 @@ ApplicationWindow {
         about.onTriggered: content.dialogs.about.open();
         fullscreen.onTriggered:Controller.toggleFullscreen();
         save.onTriggered: Controller.save();
+        zoomin.onTriggered:content.zoom(1.2);
+        zoomout.onTriggered: content.zoom(0.8);
     }
     //Content Area
     Content {
