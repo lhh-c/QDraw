@@ -58,7 +58,7 @@ Item {
     Action {
         id:_newfile
         text:qsTr("&新建")
-        icon.name:"document-new"
+        icon.name:"window-new"
     }
 
     Action {

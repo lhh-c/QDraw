@@ -10,6 +10,10 @@ ApplicationWindow {
     width: 2560
     height: 1440
     visible: true
+    title:"绘图窗口"
+
+    // 添加窗口标识属性
+    property bool isPrimaryWindow: true
 
     // 菜单栏定义
     menuBar: MenuBar {
@@ -17,7 +21,10 @@ ApplicationWindow {
         Menu {
             title: qsTr("文件")
         MenuItem {
-                action: actions.newfile}
+                action: actions.newfile
+                // 添加提示文本
+                ToolTip.text: qsTr("新建窗口 (Ctrl+N)")
+                ToolTip.visible: hovered}
             MenuItem {
                 action: actions.open}
             MenuSeparator {}  // 分隔线
@@ -114,15 +121,15 @@ ApplicationWindow {
         }
     }
 
-    Component.onCompleted: {
-            Controller.registerWindow(window); // 注册窗口引用
-        }
+    // Component.onCompleted: {
+    //         Controller.registerWindow(window); // 注册窗口引用
+    //     }
 
     Actions {
         id: actions
         open.onTriggered:Controller.open();
         color.onTriggered: Controller.openColorDialog() // 绑定颜色动作
-        // newFile.onTriggered:Controller.newfile();
+        newfile.onTriggered:Controller.createNewWindow()
         // close.onTriggered:Controller.close();
         // quit.conTriggered:Controller.quit();
         // undo.onTriggered:Controller.undo();
@@ -144,6 +151,10 @@ ApplicationWindow {
     Content {
         id:content
         anchors.fill: parent
+    }
+
+    Component.onCompleted: {
+        Controller.registerWindow(window); // 注册窗口引用
     }
 }
 
