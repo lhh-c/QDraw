@@ -63,11 +63,81 @@ function save(){
     content.dialogs.fileSave.open()
 }
 
-// function zoomin(){
-//     content.mycanvas.zoom(1.25)
-// }
+//存储复制的路径数据
+var clipboardPaths = [];
 
-// function zoomout(){
-//     content.mycanvas.zoom(0.75)
-// }
+//复制
+function copy() {
+    if (content.paths.length === 0) return;
+    clipboardPaths = [content.paths[content.paths.length - 1]]; // 复制最后一条路径
+}
 
+//剪切
+function cut() {
+    copy();
+    if (content.paths.length > 0) {
+        content.paths.pop(); //删除最后一条路径,但是不知道为什么第一次的剪切是不能删除原路径的
+        content.canvas.requestPaint(); //重绘画布
+    }
+}
+
+//粘贴
+function paste() {
+    if (clipboardPaths.length === 0) return;
+
+    //创建新路径,但是暂时还不能指定粘贴位置，只能实现在原有的线条上进行偏移以区别，证明复制成功
+    var newPath = JSON.parse(JSON.stringify(clipboardPaths[0]));
+    for (var i = 0; i < newPath.points.length; i++) {
+        newPath.points[i].x += 20;
+        newPath.points[i].y += 20;
+    }
+
+    content.paths.push(newPath);
+    content.canvas.requestPaint();
+}
+
+//粘贴（可以指定粘贴位置），还是不可以
+//本来是想通过content.qml里面已经有的函数实现对鼠标进行定位，把鼠标的位置作为参数传递给requestPaint的
+// function paste(){
+//     if (clipboardPaths.length === 0) {
+//             console.log("cutboard is empty");
+//             return;
+//         }
+
+//     // //获取鼠标当前的位置
+//     // var mouseScreenPos = content.pos;
+//     // console.log(content.pos)
+
+//     // 获取鼠标位置（带默认值）
+//     var mouseScreenPos = content.pos || { x: content.width/2, y: content.height/2 };
+//     console.log("Raw mouse position:", mouseScreenPos.x, mouseScreenPos.y);
+
+//     // //转换成画布的坐标
+//     // var mouseCanvasPos = content.globalScreenToCanvas(mouseScreenPos.x,mouseScreenPos.y);
+//     // console.log(mouseScreenPos)
+
+//     // 坐标转换
+//         try {
+//             var mouseCanvasPos = content.globalScreenToCanvas(mouseScreenPos.x, mouseScreenPos.y);
+//             console.log("Converted canvas position:", mouseCanvasPos.x, mouseCanvasPos.y);
+
+//             // 剩余粘贴逻辑...
+//         } catch (e) {
+//             console.error("Conversion failed:", e);
+//         }
+//     //计算路径偏移量
+//     var firstPoints = clipboardPaths[0][0];
+//     var offsetX = mouseCanvasPos.x - firstPoints.x;//说是x未定义，前面没有复制成功
+//     var offsetY = mouseCanvasPos.y - firstPoints.y;
+
+//     //创建路经
+//     var newPath = JSON.parse(JSON.stringify(clipboardPaths[0]))
+//     for (var i = 0 ; i < newPath.points.length; i++){
+//         newPath.points[i].x += offsetX;
+//         newPath.points[i].y += offsetY;
+//     }
+
+//     //添加到画布并重画
+//     content.paths.push(newPath);
+//     content.canvas.requestPaint();
+// }
