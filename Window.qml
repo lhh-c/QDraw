@@ -47,6 +47,8 @@ ApplicationWindow {
                 action: actions.undo}//撤销
             MenuItem {
                 action: actions.redo}//重做
+            MenuItem {
+                action: actions.deleteall}//删除所有
             MenuSeparator {}
             MenuItem {
                 action: actions.cut}//剪切
@@ -103,6 +105,7 @@ ApplicationWindow {
             // 编辑操作按钮组
             ToolButton { action: actions.undo }
             ToolButton { action: actions.redo }
+            ToolButton { action: actions.deleteall }
             ToolSeparator {}
             ToolButton { action: actions.cut }
             ToolButton { action: actions.copy }
@@ -132,8 +135,9 @@ ApplicationWindow {
         newfile.onTriggered:Controller.createNewWindow()
         // close.onTriggered:Controller.close();
         // quit.conTriggered:Controller.quit();
-        // undo.onTriggered:Controller.undo();
-        // redo.onTriggered:Controller.redo();
+        undo.onTriggered:Controller.undo();
+        redo.onTriggered:Controller.redo();
+        deleteall.onTriggered:Controller.deleteall();
         // cut.onTriggered:Controller.cut();
         // copy.onTriggered:Controller.copy();
         // paste.onTriggered:Controller.paste();

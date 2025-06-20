@@ -82,7 +82,7 @@ function setPenSize(size) {
     content.penWidth = size
 }
 
-// fullscreen实现
+// 全屏实现
 var windowRef = null;
 
 function registerWindow(window) {
@@ -123,11 +123,66 @@ function save(){
     content.dialogs.fileSave.open()
 }
 
-// function zoomin(){
-//     content.mycanvas.zoom(1.25)
-// }
+// 撤销实现
+function undo() {
+    if (content.undoStack.length > 0) {
+        // 当前状态存入重做栈
+        content.redoStack.push(JSON.parse(JSON.stringify(content.paths)))
 
-// function zoomout(){
-//     content.mycanvas.zoom(0.75)
-// }
+        // 恢复上一个状态
+        content.paths = JSON.parse(JSON.stringify(content.undoStack.pop()))
+
+        // 重绘画布
+        var bufferCtx = content.bufferCanvas.getContext("2d")
+        bufferCtx.clearRect(0, 0, content.canvas.width, content.canvas.height)
+        content.canvas.requestPaint()
+    }
+}
+
+// 重做实现
+function redo() {
+    if (content.redoStack.length > 0) {
+        // 当前状态存入撤销栈
+        content.undoStack.push(JSON.parse(JSON.stringify(content.paths)))
+
+        // 恢复重做状态
+        content.paths = JSON.parse(JSON.stringify(content.redoStack.pop()))
+
+        // 重绘画布
+        var bufferCtx = content.bufferCanvas.getContext("2d")
+        bufferCtx.clearRect(0, 0, content.canvas.width, content.canvas.height)
+        content.canvas.requestPaint()
+    }
+}
+
+// 删除所有
+function deleteall() {
+    if (!content || !content.paths) {
+           console.error("Content or paths not available");
+           return;
+       }
+
+       //  保存当前状态到撤销栈
+       content.undoStack.push(JSON.parse(JSON.stringify(content.paths)));
+       if (content.undoStack.length > content.maxUndoSteps) {
+           content.undoStack.shift();
+       }
+
+       content.paths = [];
+       content.currentPath = {
+           "points": [],
+           "width": content.penWidth,
+           "color": Qt.rgba(content.penColor.r, content.penColor.g, content.penColor.b, content.penColor.a)
+       };
+
+       content.redoStack = [];
+
+       // 清除缓冲画布
+       var bufferCtx = content.bufferCanvas.getContext("2d");
+       bufferCtx.clearRect(0, 0, content.canvas.width, content.canvas.height);
+
+       // 重绘主画布
+       content.canvas.requestPaint();
+}
+
 
