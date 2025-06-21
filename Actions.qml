@@ -65,7 +65,7 @@ Item {
     Action {
         id:_pen
         text:qsTr("&笔号")
-        icon.source: "qrc:/pen.svg.jpg"  // 有待更改
+        icon.source: "qrc:/pen.svg.jpg"
     }
 
     Action {
