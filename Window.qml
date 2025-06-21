@@ -7,8 +7,8 @@ import "draw.js" as Controller
 
 ApplicationWindow {
     id: window
-    width: 960
-    height: 960
+    width: 1440
+    height: 1440
     visible: true
     title:"绘图窗口"
 
