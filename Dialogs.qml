@@ -29,7 +29,7 @@ Item {
         buttons:MessageDialog.Ok
         text:"qml-app"
         informativeText: qsTr("qml-app is a free software")
-        // detailedText: "Copyright©2025 Wei Gong (open-src@qq.com)"
+        detailedText: "Copyright©Haihua Long,Boji Cheng,Cheng Bo(email:2560197809@qq.com)"
     }
 
     //颜色选择对话框

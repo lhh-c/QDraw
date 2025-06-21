@@ -7,8 +7,8 @@ import "draw.js" as Controller
 
 ApplicationWindow {
     id: window
-    width: 840
-    height: 840
+    width: 960
+    height: 960
     visible: true
     title:"绘图窗口"
 
@@ -47,6 +47,8 @@ ApplicationWindow {
                 action: actions.undo}//撤销
             MenuItem {
                 action: actions.redo}//重做
+            MenuItem {
+                action: actions.deleteall}//删除所有
             MenuSeparator {}
             MenuItem {
                 action: actions.cut}//剪切
@@ -97,11 +99,26 @@ ApplicationWindow {
             ToolSeparator {}
             ToolButton { action: actions.undo }
             ToolButton { action: actions.redo }
+            ToolButton { action: actions.deleteall }
             ToolSeparator {}
             ToolButton { action: actions.cut }
             ToolButton { action: actions.copy }
             ToolButton { action: actions.paste }
 
+            ToolSeparator {}
+            ToolButton{ action: actions.zoomin}
+            ComboBox{//是根据当前的画布大小进行缩放
+                id:zoomComboBox
+                model:["50%","75","100%","125%","150%","200%"]
+                currentIndex: 2 //一般默认是100%的缩放
+                onActivated:{
+                    var zoomvalues = [0.5,0.75,1.0,1.25,1.5,2]
+
+                    content.zoom(zoomvalues[index])
+                }
+            }
+
+            ToolButton{ action: actions.zoomout}
             //右侧对齐的空间占位
             Item { Layout.fillWidth: true }
 
@@ -124,6 +141,7 @@ ApplicationWindow {
         // quit.conTriggered:Controller.quit();
         undo.onTriggered:Controller.undo();
         redo.onTriggered:Controller.redo();
+        deleteall.onTriggered:Controller.deleteall();
         cut.onTriggered:Controller.cut();
         copy.onTriggered:Controller.copy();
         paste.onTriggered:Controller.paste();

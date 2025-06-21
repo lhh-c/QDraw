@@ -12,6 +12,7 @@ Item {
     property alias color: _color
     property alias undo: _undo
     property alias redo: _redo
+    property alias deleteall: _deleteall
     property alias cut: _cut
     property alias copy: _copy
     property alias paste: _paste
@@ -64,7 +65,7 @@ Item {
     Action {
         id:_pen
         text:qsTr("&笔号")
-        // icon.name:"document-new"
+        icon.source: "qrc:/pen.svg.jpg"  // 有待更改
     }
 
     Action {
@@ -88,7 +89,14 @@ Item {
         id:_redo
         text:qsTr("&重画")
         icon.name:"edit-redo"
-        shortcut: StandardKey.Redo // 添加Ctrl+Y快捷键
+        shortcut: StandardKey.Redo // 添加Ctrl+shift+z快捷键
+    }
+
+    Action {
+        id:_deleteall
+        text:qsTr("&删除所有")
+        icon.name:"edit-delete"
+        shortcut:"Del"
     }
 
     Action {

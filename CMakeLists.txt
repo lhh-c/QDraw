@@ -8,6 +8,9 @@ find_package(Qt6 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup(REQUIRES 6.9)
 
+#加入这个指令才可以找到icon
+set(CMAKE_AUTORCC ON)
+
 qt_add_executable(apptest)
 
 qt_add_qml_module(apptest
@@ -21,6 +24,7 @@ qt_add_qml_module(apptest
     QML_FILES draw.js
     QML_FILES
     QML_FILES
+    RESOURCES images.qrc
 )
 
 target_compile_features(apptest PRIVATE cxx_std_23)
