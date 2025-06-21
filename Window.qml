@@ -105,6 +105,20 @@ ApplicationWindow {
             ToolButton { action: actions.copy }
             ToolButton { action: actions.paste }
 
+            ToolSeparator {}
+            ToolButton{ action: actions.zoomin}
+            ComboBox{//是根据当前的画布大小进行缩放
+                id:zoomComboBox
+                model:["50%","75","100%","125%","150%","200%"]
+                currentIndex: 2 //一般默认是100%的缩放
+                onActivated:{
+                    var zoomvalues = [0.5,0.75,1.0,1.25,1.5,2]
+
+                    content.zoom(zoomvalues[index])
+                }
+            }
+
+            ToolButton{ action: actions.zoomout}
             //右侧对齐的空间占位
             Item { Layout.fillWidth: true }
 

@@ -65,7 +65,7 @@ Item {
     Action {
         id:_pen
         text:qsTr("&笔号")
-        icon.name:"help-about"  // 有待更改
+        icon.source: "qrc:/pen.svg.jpg"
     }
 
     Action {
@@ -89,7 +89,7 @@ Item {
         id:_redo
         text:qsTr("&重画")
         icon.name:"edit-redo"
-        shortcut: StandardKey.Redo // 添加Ctrl+Y快捷键
+        shortcut: StandardKey.Redo // 添加Ctrl+shift+z快捷键
     }
 
     Action {
