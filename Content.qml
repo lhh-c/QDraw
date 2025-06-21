@@ -45,16 +45,66 @@ Item {
     //画布容器
     Item {
         id: _canvasContainer
-        width: 840
-        height: 840
+        width: 990
+        height: 990
         anchors.top: parent.top
         anchors.left: parent.left
 
-        Flickable {
-            id: flickable
-            anchors.fill: parent
-            contentWidth: _mycanvas.width
-            contentHeight: _mycanvas.height
+        // 可滚动区域
+            Flickable {
+                id: flickable
+                anchors.fill: parent
+                contentWidth: _mycanvas.width * content.scale  // 乘以缩放系数
+                contentHeight: _mycanvas.height * content.scale
+                clip: true
+                interactive: content.scale > 1.0
+
+                ScrollBar.horizontal: ScrollBar {
+                    id: hbar
+                    width: 12
+                    visible: flickable.contentWidth > flickable.width // 内容超出时显示
+                    height: 12
+                    padding: 0
+
+                    // 滚动条轨道样式
+                    background: Rectangle {
+                        implicitHeight: 10
+                        color: "#40000000" // 半透明黑色
+                        radius: 3
+                    }
+
+                    // 滚动条滑块样式
+                    contentItem: Rectangle {
+                        implicitHeight: 10
+                        color: "#80000000"
+                        radius: 3
+                        opacity: hbar.hovered ? 0.9 : 0.6  // 悬停加深颜色
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                    }
+                }
+
+                // 现代风格垂直滚动条（与水平样式对称）
+                ScrollBar.vertical: ScrollBar {
+                    id: vbar
+                    visible: flickable.contentHeight > flickable.height
+                    height:12
+                    width: 12
+                    padding: 0
+
+                    background: Rectangle {
+                        implicitWidth: 10
+                        color: "#40000000"
+                        radius: 3
+                    }
+
+                    contentItem: Rectangle {
+                        implicitWidth: 10
+                        color: "#80000000"
+                        radius: 3
+                        opacity: vbar.hovered ? 0.9 : 0.6
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                    }
+                }
 
             Canvas {
                 id: _mycanvas

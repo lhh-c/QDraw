@@ -82,13 +82,14 @@ function setPenSize(size) {
     content.penWidth = size
 }
 
-// 全屏实现
+
 var windowRef = null;
 
 function registerWindow(window) {
     windowRef = window;
 }
 
+// 全屏实现
 function toggleFullscreen() {
     if (!windowRef) {
         console.error("未获取到窗口引用");
@@ -99,6 +100,8 @@ function toggleFullscreen() {
         windowRef.visibility = ApplicationWindow.Windowed;
         console.log("退出全屏");
     } else {
+        content.mycanvas.width = 1024
+        content.mycanvas.height = 1024
         windowRef.visibility = ApplicationWindow.FullScreen;
         console.log("进入全屏");
     }
