@@ -4,7 +4,7 @@ import QtQuick.Layouts
 
 Item {
     id: content
-    anchors.fill: parent
+    // anchors.fill: parent
 
     property int rotationAngle: 0
     property alias dialogs: _dialogs
@@ -37,7 +37,8 @@ Item {
     //黑色背景
     Rectangle {
         id: canvasBackground
-        anchors.fill: parent
+        width: parent.width  // 直接绑定
+        height: parent.height
         color: "gray"
         z: -1
     }
@@ -83,7 +84,6 @@ Item {
                     }
                 }
 
-                // 现代风格垂直滚动条（与水平样式对称）
                 ScrollBar.vertical: ScrollBar {
                     id: vbar
                     visible: flickable.contentHeight > flickable.height
