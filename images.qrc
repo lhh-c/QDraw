@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>pen.svg.jpg</file>
+        <file>eraser.png</file>
     </qresource>
 </RCC>

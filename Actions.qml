@@ -125,9 +125,9 @@ Item {
     Action {
         id: _eraser
         text: qsTr("&橡皮擦")
-        icon.name: "edit-clear"
         checkable: true
         shortcut: "Ctrl+E"
+        icon.source: "qrc:/eraser.png"
     }
 
     Action {

@@ -72,7 +72,7 @@ ApplicationWindow {
                         radius: 5
                         Layout.alignment: Qt.AlignRight
 
-                        ColumnLayout {
+                        ColumnLayout{
                             anchors.fill: parent
                             anchors.margins: 5
                             spacing: 5
