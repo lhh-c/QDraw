@@ -159,6 +159,24 @@ function paste() {
     content.canvas.requestPaint();
 }
 
+//橡皮擦实现
+function toggleEraser() {
+    if (!content) {
+        console.error("Content is unavailable.");
+        return;
+    }
+
+    content.isEraser = !content.isEraser;
+
+    if (content.isEraser) {
+        // 切换到橡皮擦模式
+        console.log("橡皮擦模式已启用");
+    } else {
+        // 切换回画笔模式
+        console.log("橡皮擦模式已禁用");
+    }
+}
+
 //粘贴（可以指定粘贴位置），还是不可以
 //本来是想通过content.qml里面已经有的函数实现对鼠标进行定位，把鼠标的位置作为参数传递给requestPaint的
 // function paste(){
