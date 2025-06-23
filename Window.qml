@@ -7,14 +7,146 @@ import "draw.js" as Controller
 
 ApplicationWindow {
     id: window
-    width: 960
-    height: 960
+    width: 1440
+    height: 1440
     visible: true
     title:"绘图窗口"
 
     // 添加窗口标识属性
     property bool isPrimaryWindow: true
 
+    RowLayout {
+            anchors.fill: parent
+            spacing: 0
+
+            // 左侧内容区域
+            Content {
+                id: content
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
+
+            // 右侧工具栏区域
+            Rectangle {
+                id: rightToolbar
+                width: 450
+                Layout.fillHeight: true
+                color: "gray"
+                border.color: "gray"
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing:2
+
+                    // 旋转按钮组使其右对齐
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignRight
+                        spacing: 2
+                        RowLayout{
+                        // 工具按钮
+                            ToolButton {
+                                 action: actions.counterclockwise   //text: qsTr("左旋")
+                                 implicitWidth: 80
+                                 implicitHeight: 50
+                            }
+
+                            ToolButton {
+                                 action: actions.clockwise          //text: qsTr("右旋")
+                                 implicitWidth: 80
+                                 implicitHeight: 50
+                            }
+                        }
+                        Rectangle{
+                            id:placeholderRectangle
+                            height: 80
+                            width: 40
+                            color:"gray"
+                        }
+                        Rectangle{
+                            id:color
+                            implicitHeight: 300
+                            implicitWidth: 200
+                            color:"gray"
+                            ColumnLayout{
+                                anchors.fill: parent
+                                spacing: 5
+                                GridView{
+                                    id:colorGridView
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    cellWidth: (parent.width - 20)/4
+                                    cellHeight: cellWidth
+                                    clip: true
+                                    model:[
+                                        "black", "white", "red", "green",
+                                        "blue", "yellow", "orange", "purple",
+                                        "pink", "brown", "gray", "cyan",
+                                        "magenta", "lime", "navy", "teal"
+                                    ]
+                                    //网格布局
+                                    delegate: Rectangle{
+                                        required property int index// 显式声明索引
+                                        required property string modelData// 显式声明颜色值
+                                        width:colorGridView.cellWidth - 5
+                                        height: colorGridView.cellHeight - 5
+                                        color: modelData
+                                        border.color: "white"
+                                        border.width: 2
+                                        TapHandler{
+                                            onTapped: {
+                                                colorGridView.currentIndex = index
+                                                content.penColor = parent.modelData
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                        //笔号大小选择器
+                        Rectangle{
+                            id:penSizeRectangle
+                            width:200
+                            height:80
+                            color:"gray"
+                            Layout.alignment: Qt.AlignRight
+                            ColumnLayout{
+                                anchors.fill: parent
+                                spacing: 5
+                                RowLayout{
+                                Label{
+                                    text:"笔号大小:"
+                                    font.bold:true
+                                }
+                                Label{
+                                    text:penSizeSlider.value + "px"
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+
+                                }
+                            Slider{
+                                id:penSizeSlider
+                                // padding: 10
+                                width:120
+                                from: 1
+                                to: 20
+                                stepSize: 1
+                                value: content.penWidth
+                                onMoved: {
+                                    content.penWidth = value
+                                }
+                            }
+
+                            }
+                        }
+
+                    Item {
+                            Layout.fillHeight: true  // 占据剩余空间
+                        }
+                }
+            }
+        }
+    }
     //菜单栏定义
     menuBar: MenuBar {
         //文件菜单
@@ -22,7 +154,6 @@ ApplicationWindow {
             title: qsTr("文件")
         MenuItem {
                 action: actions.newfile
-                // 添加提示文本
                 ToolTip.text: qsTr("新建窗口 (Ctrl+N)")
                 ToolTip.visible: hovered}
             MenuItem {
@@ -107,7 +238,8 @@ ApplicationWindow {
 
             ToolSeparator {}
             ToolButton{ action: actions.zoomin}
-            ComboBox{//是根据当前的画布大小进行缩放
+            ComboBox{
+                //是根据当前的画布大小进行缩放
                 id:zoomComboBox
                 model:["50%","75","100%","125%","150%","200%"]
                 currentIndex: 2 //一般默认是100%的缩放
@@ -138,7 +270,6 @@ ApplicationWindow {
         color.onTriggered: Controller.openColorDialog(); //绑定颜色动作
         newfile.onTriggered:Controller.createNewWindow();
         // close.onTriggered:Controller.close();
-        // quit.conTriggered:Controller.quit();
         undo.onTriggered:Controller.undo();
         redo.onTriggered:Controller.redo();
         deleteall.onTriggered:Controller.deleteall();
@@ -146,7 +277,6 @@ ApplicationWindow {
         copy.onTriggered:Controller.copy();
         paste.onTriggered:Controller.paste();
         pen.onTriggered:Controller.openPenSizeDialog();
-        // color.onTriggered:Controller.color()
         clockwise.onTriggered: Controller.rotateCanvas(90);
         counterclockwise.onTriggered: Controller.rotateCanvas(-90);
         about.onTriggered: content.dialogs.about.open();
@@ -156,10 +286,10 @@ ApplicationWindow {
         zoomout.onTriggered: content.zoom(0.8);
     }
     //Content Area
-    Content {
-        id:content
-        anchors.fill: parent
-    }
+    // Content {
+    //     id:content
+    //     anchors.fill: parent
+    // }
     Component.onCompleted: {
         Controller.registerWindow(window); // 注册窗口引用
     }

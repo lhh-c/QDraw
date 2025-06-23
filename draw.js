@@ -82,13 +82,14 @@ function setPenSize(size) {
     content.penWidth = size
 }
 
-// 全屏实现
+
 var windowRef = null;
 
 function registerWindow(window) {
     windowRef = window;
 }
 
+// 全屏实现
 function toggleFullscreen() {
     if (!windowRef) {
         console.error("未获取到窗口引用");
@@ -99,6 +100,8 @@ function toggleFullscreen() {
         windowRef.visibility = ApplicationWindow.Windowed;
         console.log("退出全屏");
     } else {
+        content.mycanvas.width = 1024
+        content.mycanvas.height = 1024
         windowRef.visibility = ApplicationWindow.FullScreen;
         console.log("进入全屏");
     }
@@ -204,13 +207,11 @@ function paste() {
 // 撤销实现
 function undo() {
     if (content.undoStack.length > 0) {
-        // 当前状态存入重做栈
+        //当前状态存入重做栈
         content.redoStack.push(JSON.parse(JSON.stringify(content.paths)))
-
-        // 恢复上一个状态
+        //恢复上一个状态
         content.paths = JSON.parse(JSON.stringify(content.undoStack.pop()))
-
-        // 重绘画布
+        //重绘画布
         var bufferCtx = content.bufferCanvas.getContext("2d")
         bufferCtx.clearRect(0, 0, content.canvas.width, content.canvas.height)
         content.canvas.requestPaint()
@@ -220,13 +221,11 @@ function undo() {
 // 重做实现
 function redo() {
     if (content.redoStack.length > 0) {
-        // 当前状态存入撤销栈
+        //当前状态存入撤销栈
         content.undoStack.push(JSON.parse(JSON.stringify(content.paths)))
-
-        // 恢复重做状态
+        //恢复重做状态
         content.paths = JSON.parse(JSON.stringify(content.redoStack.pop()))
-
-        // 重绘画布
+        //重绘画布
         var bufferCtx = content.bufferCanvas.getContext("2d")
         bufferCtx.clearRect(0, 0, content.canvas.width, content.canvas.height)
         content.canvas.requestPaint()
@@ -239,27 +238,22 @@ function deleteall() {
            console.error("Content or paths not available");
            return;
        }
-
-       //  保存当前状态到撤销栈
+       //保存当前状态到撤销栈
        content.undoStack.push(JSON.parse(JSON.stringify(content.paths)));
        if (content.undoStack.length > content.maxUndoSteps) {
            content.undoStack.shift();
        }
-
        content.paths = [];
        content.currentPath = {
            "points": [],
            "width": content.penWidth,
            "color": Qt.rgba(content.penColor.r, content.penColor.g, content.penColor.b, content.penColor.a)
        };
-
        content.redoStack = [];
-
-       // 清除缓冲画布
+       //清除缓冲画布
        var bufferCtx = content.bufferCanvas.getContext("2d");
        bufferCtx.clearRect(0, 0, content.canvas.width, content.canvas.height);
-
-       // 重绘主画布
+       //重绘主画布
        content.canvas.requestPaint();
 }
 
