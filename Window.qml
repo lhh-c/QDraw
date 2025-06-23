@@ -37,7 +37,6 @@ ApplicationWindow {
                 ColumnLayout {
                     anchors.fill: parent
                     spacing:2
-
                     // 旋转按钮组使其右对齐
                     ColumnLayout {
                         Layout.alignment: Qt.AlignRight
@@ -103,45 +102,95 @@ ApplicationWindow {
                                 }
                             }
                         }
-                        //笔号大小选择器
-                        Rectangle{
-                            id:penSizeRectangle
-                            width:200
-                            height:80
-                            color:"gray"
-                            Layout.alignment: Qt.AlignRight
-                            ColumnLayout{
-                                anchors.fill: parent
-                                spacing: 5
-                                RowLayout{
-                                Label{
-                                    text:"笔号大小:"
-                                    font.bold:true
-                                }
-                                Label{
-                                    text:penSizeSlider.value + "px"
+
+                    // 橡皮擦大小选择器
+                    Rectangle {
+                        id: _eraserSizePanel
+                        visible: true
+                        width: 200
+                        height: 80
+                        color: "gray"
+                        radius: 5
+                        Layout.alignment: Qt.AlignRight
+
+                        ColumnLayout{
+                            anchors.fill: parent
+                            anchors.margins: 5
+                            spacing: 5
+                            ToolButton {
+                                action: actions.eraser
+                                ToolTip.text: qsTr("橡皮擦 (Ctrl+E)")
+                                ToolTip.visible: hovered
+                                icon.color: content.isEraser ? "red" : "black"
+                            }
+                            RowLayout{
+
+                                Label {
+                                    text: "橡皮擦大小:"
+                                    font.bold: true
                                     Layout.alignment: Qt.AlignHCenter
                                 }
-
+                                Label {
+                                    text: _eraserSizeSlider.value + "px"
+                                    Layout.alignment: Qt.AlignHCenter
                                 }
-                            Slider{
-                                id:penSizeSlider
-                                // padding: 10
+                            }
+                            Slider {
+                                id: _eraserSizeSlider
                                 width:120
-                                from: 1
-                                to: 20
+                                from: 5
+                                to: 50
                                 stepSize: 1
-                                value: content.penWidth
+                                value: content.eraserWidth
+
                                 onMoved: {
-                                    content.penWidth = value
+                                    content.eraserWidth = value
                                 }
                             }
 
+
+                        }
+                    }
+                    //笔号大小选择器
+                    Rectangle{
+                        id:penSizeRectangle
+                        width:200
+                        height:80
+                        color:"gray"
+                        Layout.alignment: Qt.AlignRight
+                        ColumnLayout{
+                            anchors.fill: parent
+                            spacing: 5
+                            RowLayout{
+                            Label{
+                                Layout.leftMargin: 5
+                                text:"笔号大小:"
+                                font.bold:true
+                            }
+                            Label{
+                                text:penSizeSlider.value + "px"
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+
+                            }
+                        Slider{
+                            id:penSizeSlider
+                            // padding: 10
+                            Layout.leftMargin: 5
+                            width:120
+                            from: 1
+                            to: 20
+                            stepSize: 1
+                            value: content.penWidth
+                            onMoved: {
+                                content.penWidth = value
                             }
                         }
 
+                        }
+                    }
                     Item {
-                            Layout.fillHeight: true  // 占据剩余空间
+                            Layout.fillHeight: true  //占据剩余空间
                         }
                 }
             }
@@ -235,7 +284,6 @@ ApplicationWindow {
             ToolButton { action: actions.cut }
             ToolButton { action: actions.copy }
             ToolButton { action: actions.paste }
-
             ToolSeparator {}
             ToolButton{ action: actions.zoomin}
             ComboBox{
@@ -266,7 +314,7 @@ ApplicationWindow {
 
     Actions {
         id: actions
-        open.onTriggered:Controller.open();
+        open.onTriggered: Controller.open();
         color.onTriggered: Controller.openColorDialog(); //绑定颜色动作
         newfile.onTriggered:Controller.createNewWindow();
         // close.onTriggered:Controller.close();
@@ -276,6 +324,7 @@ ApplicationWindow {
         cut.onTriggered:Controller.cut();
         copy.onTriggered:Controller.copy();
         paste.onTriggered:Controller.paste();
+        eraser.onTriggered: Controller.toggleEraser();
         pen.onTriggered:Controller.openPenSizeDialog();
         clockwise.onTriggered: Controller.rotateCanvas(90);
         counterclockwise.onTriggered: Controller.rotateCanvas(-90);

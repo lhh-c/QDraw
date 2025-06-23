@@ -49,7 +49,7 @@ Item {
         modal: true
         standardButtons: Dialog.Ok | Dialog.Cancel
 
-        property int selectedSize: 3 //默认值(1-5范围)
+        property int selectedSize: 3 //默认值(1-20范围)
 
         ColumnLayout {
             anchors.fill: parent
@@ -57,9 +57,9 @@ Item {
 
             //滑块控件
             Slider {
-                id: penSizeSlider
+                id: _penSizeSlider
                 from: 1
-                to: 10
+                to: 20
                 stepSize: 1
                 value: _penSizeDialog.selectedSize
                 snapMode: Slider.SnapAlways
@@ -68,13 +68,13 @@ Item {
 
                 onMoved: {
                     _penSizeDialog.selectedSize = value
-                    sizeDisplay.text = "当前大小: " + value + "px"
+                    _sizeDisplay.text = "当前大小: " + value + "px"
                 }
             }
 
             //显示当前笔号大小
             Label {
-                id: sizeDisplay
+                id: _sizeDisplay
                 text: "当前大小: " + _penSizeDialog.selectedSize + "px"
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true

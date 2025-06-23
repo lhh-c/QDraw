@@ -26,6 +26,11 @@ Item {
     property color penColor: "black"
     property real penWidth: 3
 
+    //橡皮擦属性
+    property bool isEraser: false
+    property real eraserWidth: 20 //橡皮擦大小
+    property color eraserColor: "lightgray"//与画布背景色一致
+
     //路径数据
     property var paths: []
     property var currentPath: ({
@@ -228,12 +233,19 @@ Item {
                     if (active) {
                         drawarea.isDrawing = true;
                         content.pos = drawarea.screenToCanvas(centroid.position.x, centroid.position.y);
-                        content.currentPath = {
-                            "points": [pos],
-                            "width": content.penWidth,
-                            "color": Qt.rgba(content.penColor.r, content.penColor.g,
-                            content.penColor.b, content.penColor.a)
-                        };
+                        if (content.isEraser) {
+                            content.currentPath = {
+                                "points": [pos],
+                                "width": content.eraserWidth,
+                                "color": content.eraserColor
+                            };
+                        } else {
+                            content.currentPath = {
+                                "points": [pos],
+                                "width": content.penWidth,
+                                "color": Qt.rgba(content.penColor.r, content.penColor.g,content.penColor.b, content.penColor.a)
+                            };
+                        }
                         _mycanvas.requestPaint();
                     }
                     else if (drawarea.isDrawing) {
