@@ -226,7 +226,7 @@ ApplicationWindow {
 
     Actions {
         id: actions
-        open.onTriggered:Controller.open();
+        open.onTriggered: Controller.open();
         color.onTriggered: Controller.openColorDialog(); //绑定颜色动作
         newfile.onTriggered:Controller.createNewWindow();
         // close.onTriggered:Controller.close();

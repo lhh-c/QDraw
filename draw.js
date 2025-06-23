@@ -108,8 +108,39 @@ function toggleFullscreen() {
 }
 
 
-function open(){
+// function open(){
+//     content.dialogs.fileOpen.open()
+// }
+
+
+// function save(){
+//     content.dialogs.fileSave.open()
+// }
+
+function open() {
     content.dialogs.fileOpen.open()
+    console.log("图片编辑功能有待完善。")
+}
+
+// 文件保存
+function save() {
+    var dialog = content.dialogs.fileSave;
+    dialog.accepted.connect(function() {
+        if (dialog.selectedFile) {
+            var fileUrl = dialog.selectedFile;
+            if (!fileUrl.toString().toLowerCase().endsWith(".png")) {
+                fileUrl = fileUrl + ".png";
+            }
+
+            content.mycanvas.grabToImage(function(result) {
+                if (!result.saveToFile(fileUrl)) {
+                    console.error("保存失败:", fileUrl);
+                    content.dialogs.failToSave.open();
+                }
+            });
+        }
+    });
+    dialog.open();
 }
 
 function rotateCanvas(angle) {
@@ -118,12 +149,6 @@ function rotateCanvas(angle) {
     } else {
         console.error("Canvas is unavailable.")
     }
-}
-
-
-
-function save(){
-    content.dialogs.fileSave.open()
 }
 
 //存储复制的路径数据
@@ -274,6 +299,8 @@ function deleteall() {
        //重绘主画布
        content.canvas.requestPaint();
 }
+
+
 
 // function zoomin(){
 //     content.mycanvas.zoom(1.25)
