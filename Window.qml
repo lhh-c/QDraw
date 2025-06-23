@@ -54,9 +54,56 @@ ApplicationWindow {
                              implicitWidth: 80
                              implicitHeight: 50
                         }
+
+                        ToolButton {
+                            action: actions.eraser
+                            ToolTip.text: qsTr("橡皮擦 (Ctrl+E)")
+                            ToolTip.visible: hovered
+                            icon.color: content.isEraser ? "red" : "black"
+                        }
+                    }
+                    // 橡皮擦大小选择器
+                    Rectangle {
+                        id: _eraserSizePanel
+                        visible: true
+                        width: 150
+                        height: 80
+                        color: "gray"
+                        radius: 5
+                        Layout.alignment: Qt.AlignRight
+
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 5
+                            spacing: 5
+
+                            Label {
+                                text: "橡皮擦大小"
+                                font.bold: true
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+
+                            Slider {
+                                id: _eraserSizeSlider
+                                from: 5
+                                to: 50
+                                stepSize: 1
+                                value: content.eraserWidth
+                                Layout.fillWidth: true
+
+                                onMoved: {
+                                    content.eraserWidth = value
+                                }
+                            }
+
+                            Label {
+                                text: _eraserSizeSlider.value + "px"
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+                        }
                     }
                     Item {
-                            Layout.fillHeight: true  // 占据剩余空间
+                            Layout.fillHeight: true  //占据剩余空间
                         }
                 }
             }
@@ -149,13 +196,6 @@ ApplicationWindow {
             ToolButton { action: actions.cut }
             ToolButton { action: actions.copy }
             ToolButton { action: actions.paste }
-            ToolSeparator {}
-            ToolButton {
-                action: actions.eraser
-                ToolTip.text: qsTr("橡皮擦 (Ctrl+E)")
-                ToolTip.visible: hovered
-                icon.color: content.isEraser ? "red" : "black"
-            }
             ToolSeparator {}
             ToolButton{ action: actions.zoomin}
             ComboBox{
