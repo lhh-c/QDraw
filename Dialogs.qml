@@ -16,11 +16,10 @@ Item {
 
     FileDialog {
         id: _fileOpen
-        title: "Select some draw files"
-        currentFolder: StandardPaths.standardLocations
-                       (StandardPaths.DocumentsLocation)[0]
-        fileMode: FileDialog.OpenFiles
-        nameFilters: ["draw files (*.bmp *.jpg *.jpeg *.tiff *.gif)"]
+        title: "选择图片文件"
+        currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]  // 修改默认目录
+        fileMode: FileDialog.OpenFile
+        nameFilters: ["图片文件 (*.png *.jpg *.jpeg *.bmp)"]
     }
 
     MessageDialog{

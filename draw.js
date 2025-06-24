@@ -117,9 +117,43 @@ function toggleFullscreen() {
 //     content.dialogs.fileSave.open()
 // }
 
+//图片打开实现
 function open() {
     content.dialogs.fileOpen.open()
-    console.log("图片编辑功能有待完善。")
+    content.dialogs.fileOpen.accepted.connect(function() {
+        if (content.dialogs.fileOpen.selectedFile) {
+            //清除当前画布内容
+            content.paths = []
+            content.undoStack = []
+            content.redoStack = []
+            //确保能访问到openedImage
+            if (!content.openedImage) {
+                console.error("openedImage is not available")
+                return
+            }
+            //设置图片源并显示
+            content.openedImage.source = content.dialogs.fileOpen.selectedFile
+            content.openedImage.visible = true
+            //将图片绘制到画布上
+            var ctx = content.bufferCanvas.getContext("2d")
+            ctx.clearRect(0, 0, content.canvas.width, content.canvas.height)
+            //使用定时器确保图片加载完成后再绘制
+            var timer = Qt.createQmlObject('import QtQuick; Timer { interval: 100; running: true }',content, "timer")
+            timer.triggered.connect(function() {
+                if (content.openedImage.status === Image.Ready) {
+                    try {
+                        ctx.drawImage(content.openedImage, 0, 0,
+                                    content.canvas.width, content.canvas.height)
+                        content.canvas.requestPaint()
+                        content.openedImage.visible = false
+                    } catch(e) {
+                        console.error("Failed to draw image:", e)
+                    }
+                }
+                timer.destroy()
+            })
+        }
+    })
 }
 
 // 文件保存
