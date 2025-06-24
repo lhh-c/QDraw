@@ -122,36 +122,23 @@ function open() {
     content.dialogs.fileOpen.open()
     content.dialogs.fileOpen.accepted.connect(function() {
         if (content.dialogs.fileOpen.selectedFile) {
-            //清除当前画布内容
+            //清除当前画布内容但不影响背景图片
             content.paths = []
             content.undoStack = []
             content.redoStack = []
-            //确保能访问到openedImage
             if (!content.openedImage) {
                 console.error("openedImage is not available")
                 return
             }
-            //设置图片源并显示
-            content.openedImage.source = content.dialogs.fileOpen.selectedFile
-            content.openedImage.visible = true
-            //将图片绘制到画布上
-            var ctx = content.bufferCanvas.getContext("2d")
-            ctx.clearRect(0, 0, content.canvas.width, content.canvas.height)
-            //使用定时器确保图片加载完成后再绘制
-            var timer = Qt.createQmlObject('import QtQuick; Timer { interval: 100; running: true }',content, "timer")
-            timer.triggered.connect(function() {
-                if (content.openedImage.status === Image.Ready) {
-                    try {
-                        ctx.drawImage(content.openedImage, 0, 0,
-                                    content.canvas.width, content.canvas.height)
-                        content.canvas.requestPaint()
-                        content.openedImage.visible = false
-                    } catch(e) {
-                        console.error("Failed to draw image:", e)
-                    }
-                }
-                timer.destroy()
-            })
+            //设置背景图片属性
+            content.backgroundImageUrl = content.dialogs.fileOpen.selectedFile
+            content.hasBackgroundImage = true
+            content.openedImage.source = content.backgroundImageUrl
+            //清除缓冲画布并保留主画布的背景图片
+            var bufferCtx = content.bufferCanvas.getContext("2d")
+            bufferCtx.clearRect(0, 0, content.canvas.width, content.canvas.height)
+            //重绘画布
+            content.canvas.requestPaint()
         }
     })
 }
@@ -226,14 +213,6 @@ function toggleEraser() {
     }
 
     content.isEraser = !content.isEraser;
-
-    if (content.isEraser) {
-        // 切换到橡皮擦模式
-        console.log("橡皮擦模式已启用");
-    } else {
-        // 切换回画笔模式
-        console.log("橡皮擦模式已禁用");
-    }
 }
 
 //粘贴（可以指定粘贴位置），还是不可以

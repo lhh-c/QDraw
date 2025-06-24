@@ -126,7 +126,7 @@ ApplicationWindow {
                             }
                         }
 
-                    // 橡皮擦大小选择器
+                    //橡皮擦大小选择器
                     Rectangle {
                         id: _eraserSizePanel
                         visible: true
