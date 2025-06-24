@@ -39,6 +39,12 @@ Item {
         "color": Qt.rgba(penColor.r, penColor.g, penColor.b, penColor.a)
     })
 
+    // 折线属性
+    property bool isBrokenLineMode: false
+    property var brokenLinePoints: []
+    property bool isBrokenLineDrawing: false
+    property int brokenLineClickCount: 0
+
     //黑色背景
     Rectangle {
         id: canvasBackground
@@ -182,6 +188,10 @@ Item {
                         drawPath(content.currentPath.points, content.currentPath.width, content.currentPath.color)
                     }
                     ctx.restore()
+                    //用于绘画折线
+                    if (content.brokenLinePoints.length > 1) {
+                            drawPath(content.brokenLinePoints, content.penWidth, Qt.rgba(content.penColor.r, content.penColor.g, content.penColor.b, content.penColor.a))
+                    }
                 }
             }
 
@@ -191,26 +201,26 @@ Item {
 
                 //屏幕坐标转换为画布坐标的函数
                 function screenToCanvas(x, y) {
-                //1.获取鼠标在画布上的原始坐标
+                //获取鼠标在画布上的原始坐标
                 var canvasPos = _mycanvas.mapFromItem(drawarea, x, y);
 
-                //2.转换为相对于旋转中心的坐标
+                //转换为相对于旋转中心的坐标
                 var centerX = _mycanvas.width / 2;
                 var centerY = _mycanvas.height / 2;
                 var point = Qt.point(canvasPos.x - centerX, canvasPos.y - centerY);
 
-                //3.应用逆旋转（使用正角度）
+                //应用逆旋转（使用正角度）
                 var rad = rotationAngle * Math.PI / 180;
                 var cos = Math.cos(rad);
                 var sin = Math.sin(rad);
                 var x1 = point.x * cos + point.y * sin;
                 var y1 = -point.x * sin + point.y * cos;
 
-                //4.应用逆缩放
+                //应用逆缩放
                 x1 = x1 / scale;
                 y1 = y1 / scale;
 
-                //5.转换回绝对坐标
+                //转换回绝对坐标
                 return Qt.point(x1 + centerX, y1 + centerY);
             }
 
@@ -227,67 +237,104 @@ Item {
 
             //处理绘图操作
             DragHandler {
-                acceptedButtons: Qt.LeftButton |Qt.RightButton
+                id: drawHandler
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                property point lastClickPos
+                property var clickTimer: Timer {
+                    interval: 300
+                    onTriggered: content.brokenLineClickCount = 0
+                }
 
                 onActiveChanged: {
                     if (active) {
-                        drawarea.isDrawing = true;
-                        content.pos = drawarea.screenToCanvas(centroid.position.x, centroid.position.y);
-                        if (content.isEraser) {
-                            content.currentPath = {
-                                "points": [pos],
-                                "width": content.eraserWidth,
-                                "color": content.eraserColor
-                            };
-                        } else {
-                            content.currentPath = {
-                                "points": [pos],
-                                "width": content.penWidth,
-                                "color": Qt.rgba(content.penColor.r, content.penColor.g,content.penColor.b, content.penColor.a)
-                            };
-                        }
-                        _mycanvas.requestPaint();
-                    }
-                    else if (drawarea.isDrawing) {
-                        if (content.currentPath.points.length >= 1) {
-                            content.undoStack.push(JSON.parse(JSON.stringify(content.paths)));
+                        var pos = drawarea.screenToCanvas(centroid.position.x, centroid.position.y)
+                        lastClickPos = centroid.position
 
-                            content.paths.push({
-                                "points": content.currentPath.points,
-                                "width": content.currentPath.width,
-                                "color": Qt.rgba(content.currentPath.color.r,content.currentPath.color.g,content.currentPath.color.b,content.currentPath.color.a)
-                            });
-                            if (content.undoStack.length > content.maxUndoSteps) {
-                                content.undoStack.shift();
+                        if (content.isBrokenLineMode) {
+                            if (!content.isBrokenLineDrawing) {
+                                //新折线
+                                content.brokenLinePoints = [pos]
+                                content.isBrokenLineDrawing = true
+                                content.brokenLineClickCount = 1
+                            } else {
+                                //添加新点
+                                content.brokenLinePoints.push(pos)
+                                content.brokenLineClickCount++
+                                //双击完成折线
+                                if (content.brokenLineClickCount >= 2) {
+                                    Controller.completeBrokenLine()
+                                    return
+                                }
                             }
-                            content.redoStack = [];
+                            clickTimer.start()
+                        } else {
+                            drawarea.isDrawing = true
+                            content.pos = pos
 
-                            //重置当前路径
-                            content.currentPath = {
-                                "points": [],
-                                "width": content.penWidth,
-                                "color": Qt.rgba(content.penColor.r,content.penColor.g,content.penColor.b,content.penColor.a)
-                            };
-
-                            //更新缓冲画布
-                            var bufferCtx = _bufferCanvas.getContext("2d");
-                            bufferCtx.drawImage(_mycanvas, 0, 0);
+                            if (content.isEraser) {
+                                content.currentPath = {
+                                    "points": [pos],
+                                    "width": content.eraserWidth,
+                                    "color": content.eraserColor
+                                }
+                            } else {
+                                content.currentPath = {
+                                    "points": [pos],
+                                    "width": content.penWidth,
+                                    "color": Qt.rgba(content.penColor.r, content.penColor.g, content.penColor.b, content.penColor.a)
+                                }
+                            }
                         }
-                        drawarea.isDrawing = false;
+                        _mycanvas.requestPaint()
+                    } else if (drawarea.isDrawing && !content.isBrokenLineMode) {
+                        //绘图结束
+                        if (content.currentPath.points.length >= 1) {
+                            saveCurrentPath()
+                        }
+                        drawarea.isDrawing = false
                     }
                 }
 
                 onCentroidChanged: {
-                    if (drawarea.isDrawing) {
-                        //绘制过程中移动鼠标
-                        var pos = drawarea.screenToCanvas(centroid.position.x, centroid.position.y);
-                        content.currentPath.points.push(pos);
-                        _mycanvas.requestPaint();
+                    var pos = drawarea.screenToCanvas(centroid.position.x, centroid.position.y)
+
+                    if (content.isBrokenLineMode && content.isBrokenLineDrawing) {
+                        //更新最后一个点的位置
+                        if (content.brokenLinePoints.length > 0) {
+                            content.brokenLinePoints[content.brokenLinePoints.length - 1] = pos
+                            _mycanvas.requestPaint()
+                        }
+                    } else if (drawarea.isDrawing) {
+                        content.currentPath.points.push(pos)
+                        _mycanvas.requestPaint()
                     }
+                }
+
+                //保存当前路径
+                function saveCurrentPath() {
+                    content.undoStack.push(JSON.parse(JSON.stringify(content.paths)))
+                    content.paths.push({
+                        "points": content.currentPath.points,
+                        "width": content.currentPath.width,
+                        "color": Qt.rgba(content.currentPath.color.r, content.currentPath.color.g, content.currentPath.color.b, content.currentPath.color.a)
+                    })
+                    if (content.undoStack.length > content.maxUndoSteps) {
+                        content.undoStack.shift()
+                    }
+                    content.redoStack = []
+                    content.currentPath = {
+                        "points": [],
+                        "width": content.penWidth,
+                        "color": Qt.rgba(content.penColor.r, content.penColor.g, content.penColor.b, content.penColor.a)
+                    }
+                    var bufferCtx = _bufferCanvas.getContext("2d")
+                    bufferCtx.drawImage(_mycanvas, 0, 0)
                 }
             }
         }
     }
+
     function rotateCanvas(angle) {
         var newAngle = content.rotationAngle + angle
         if (newAngle < 0) newAngle += 360

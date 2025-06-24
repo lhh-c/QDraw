@@ -306,6 +306,49 @@ function deleteall() {
 //     content.mycanvas.zoom(1.25)
 // }
 
+function toggleBrokenLineMode() {
+    if (!content) {
+        console.error("Content is unavailable.");
+        return;
+    }
+
+    content.isBrokenLineMode = !content.isBrokenLineMode;
+
+    // 如果退出折线模式，清除未完成的折线
+    if (!content.isBrokenLineMode && content.isBrokenLineDrawing) {
+        content.brokenLinePoints = [];
+        content.isBrokenLineDrawing = false;
+        content.canvas.requestPaint();
+    }
+}
+
+// 完成折线绘制
+function completeBrokenLine() {
+    if (content.brokenLinePoints.length > 1) {
+        // 保存折线到路径
+        content.undoStack.push(JSON.parse(JSON.stringify(content.paths)));
+        content.paths.push({
+            "points": content.brokenLinePoints,
+            "width": content.penWidth,
+            "color": Qt.rgba(content.penColor.r, content.penColor.g, content.penColor.b, content.penColor.a)
+        });
+
+        if (content.undoStack.length > content.maxUndoSteps) {
+            content.undoStack.shift();
+        }
+        content.redoStack = [];
+
+        // 更新缓冲画布
+        var bufferCtx = content.bufferCanvas.getContext("2d");
+        bufferCtx.drawImage(content.canvas, 0, 0);
+
+        // 重置状态
+        content.brokenLinePoints = [];
+        content.isBrokenLineDrawing = false;
+        content.canvas.requestPaint();
+    }
+}
+
 
 
 

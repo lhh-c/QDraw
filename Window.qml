@@ -55,6 +55,11 @@ ApplicationWindow {
                                  implicitHeight: 50
                             }
                         }
+                        ToolButton {
+                             action: actions.brokenline        //text: qsTr("右旋")
+                             implicitWidth: 80
+                             implicitHeight: 50
+                        }
                         Rectangle{
                             id:placeholderRectangle
                             height: 80
@@ -333,6 +338,7 @@ ApplicationWindow {
         save.onTriggered: Controller.save();
         zoomin.onTriggered:content.zoom(1.2);
         zoomout.onTriggered: content.zoom(0.8);
+        brokenline. onTriggered:Controller.toggleBrokenLineMode();
     }
     //Content Area
     // Content {
@@ -341,6 +347,21 @@ ApplicationWindow {
     // }
     Component.onCompleted: {
         Controller.registerWindow(window); // 注册窗口引用
+    }
+    Connections {
+        target: actions.brokenline
+        function onTriggered() {
+            content.isBrokenLineMode = actions.brokenline.checked
+            content.isEraser = false
+            actions.eraser.checked = false
+
+            // 退出折线模式时清除未完成的折线
+            if (!content.isBrokenLineMode && content.isBrokenLineDrawing) {
+                content.brokenLinePoints = []
+                content.isBrokenLineDrawing = false
+                _mycanvas.requestPaint()
+            }
+        }
     }
 
 }
