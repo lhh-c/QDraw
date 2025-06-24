@@ -36,37 +36,101 @@ ApplicationWindow {
 
                 ColumnLayout {
                     anchors.fill: parent
-                    spacing: 2
-
+                    spacing:2
                     // 旋转按钮组使其右对齐
                     ColumnLayout {
                         Layout.alignment: Qt.AlignRight
                         spacing: 2
+                        RowLayout{
                         // 工具按钮
-                        ToolButton {
-                             action: actions.counterclockwise   //text: qsTr("左旋")
-                             implicitWidth: 80
-                             implicitHeight: 50
+                            ToolButton {
+                                 action: actions.counterclockwise   //text: qsTr("左旋")
+                                 implicitWidth: 80
+                                 implicitHeight: 50
+                            }
+
+                            ToolButton {
+                                 action: actions.clockwise          //text: qsTr("右旋")
+                                 implicitWidth: 80
+                                 implicitHeight: 50
+                            }
+                        }
+                        Rectangle{
+                            id:placeholderRectangle
+                            height: 80
+                            width: 40
+                            color:"gray"
+                        }
+                        Rectangle{
+                            id:color
+                            implicitHeight: 300
+                            implicitWidth: 200
+                            color:"gray"
+                            ColumnLayout{
+                                anchors.fill: parent
+                                spacing: 5
+                                //当前颜色预览
+                                Rectangle {
+                                    id: currentColorPreview
+                                    implicitHeight: colorGridView.cellWidth
+                                    implicitWidth: colorGridView.cellWidth
+                                    color: content.penColor
+                                    border.color: "white"
+                                    border.width: 2
+                                    Layout.alignment: Qt.AlignHCenter
+
+
+                                    //"当前颜色"标签
+                                    Label {
+                                        text: "当前颜色"
+                                        anchors {
+                                            bottom: parent.top
+                                            bottomMargin: 5
+                                            horizontalCenter: parent.horizontalCenter
+                                        }
+                                        font.bold: true
+                                        color: "white"
+                                    }
+                                }
+                                GridView{
+                                    id:colorGridView
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    cellWidth: (parent.width - 20)/4
+                                    cellHeight: cellWidth
+                                    clip: true
+                                    model:[
+                                        "black", "white", "red", "green",
+                                        "blue", "yellow", "orange", "purple",
+                                        "pink", "brown", "gray", "cyan",
+                                        "magenta", "lime", "navy", "teal"
+                                    ]
+                                    //网格布局
+                                    delegate: Rectangle{
+                                        required property int index// 显式声明索引
+                                        required property string modelData// 显式声明颜色值
+                                        width:colorGridView.cellWidth - 5
+                                        height: colorGridView.cellHeight - 5
+                                        color: modelData
+                                        border.color: "white"
+                                        border.width: 2
+                                        TapHandler{
+                                            onTapped: {
+                                                colorGridView.currentIndex = index
+                                                content.penColor = parent.modelData
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
                         }
 
-                        ToolButton {
-                             action: actions.clockwise          //text: qsTr("右旋")
-                             implicitWidth: 80
-                             implicitHeight: 50
-                        }
-
-                        ToolButton {
-                            action: actions.eraser
-                            ToolTip.text: qsTr("橡皮擦 (Ctrl+E)")
-                            ToolTip.visible: hovered
-                            icon.color: content.isEraser ? "red" : "black"
-                        }
-                    }
                     // 橡皮擦大小选择器
                     Rectangle {
                         id: _eraserSizePanel
                         visible: true
-                        width: 150
+                        width: 200
                         height: 80
                         color: "gray"
                         radius: 5
@@ -76,30 +140,76 @@ ApplicationWindow {
                             anchors.fill: parent
                             anchors.margins: 5
                             spacing: 5
-
-                            Label {
-                                text: "橡皮擦大小"
-                                font.bold: true
-                                Layout.alignment: Qt.AlignHCenter
+                            ToolButton {
+                                action: actions.eraser
+                                ToolTip.text: qsTr("橡皮擦 (Ctrl+E)")
+                                ToolTip.visible: hovered
+                                icon.color: content.isEraser ? "red" : "black"
                             }
+                            RowLayout{
 
+                                Label {
+                                    text: "橡皮擦大小:"
+                                    font.bold: true
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                                Label {
+                                    text: _eraserSizeSlider.value + "px"
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                            }
                             Slider {
                                 id: _eraserSizeSlider
+                                width:120
                                 from: 5
                                 to: 50
                                 stepSize: 1
                                 value: content.eraserWidth
-                                Layout.fillWidth: true
 
                                 onMoved: {
                                     content.eraserWidth = value
                                 }
                             }
 
-                            Label {
-                                text: _eraserSizeSlider.value + "px"
+
+                        }
+                    }
+                    //笔号大小选择器
+                    Rectangle{
+                        id:penSizeRectangle
+                        width:200
+                        height:80
+                        color:"gray"
+                        Layout.alignment: Qt.AlignRight
+                        ColumnLayout{
+                            anchors.fill: parent
+                            spacing: 5
+                            RowLayout{
+                            Label{
+                                Layout.leftMargin: 5
+                                text:"笔号大小:"
+                                font.bold:true
+                            }
+                            Label{
+                                text:penSizeSlider.value + "px"
                                 Layout.alignment: Qt.AlignHCenter
                             }
+
+                            }
+                        Slider{
+                            id:penSizeSlider
+                            // padding: 10
+                            Layout.leftMargin: 5
+                            width:120
+                            from: 1
+                            to: 20
+                            stepSize: 1
+                            value: content.penWidth
+                            onMoved: {
+                                content.penWidth = value
+                            }
+                        }
+
                         }
                     }
                     Item {
@@ -108,6 +218,7 @@ ApplicationWindow {
                 }
             }
         }
+    }
     //菜单栏定义
     menuBar: MenuBar {
         //文件菜单
