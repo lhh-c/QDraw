@@ -31,6 +31,11 @@ Item {
     property real eraserWidth: 20 //橡皮擦大小
     property color eraserColor: "lightgray"//与画布背景色一致
 
+    //图片打开属性
+    property alias openedImage: openedImage
+    property url backgroundImageUrl
+    property bool hasBackgroundImage: false
+
     //路径数据
     property var paths: []
     property var currentPath: ({
@@ -154,9 +159,23 @@ Item {
                     z: -1
                 }
 
+                Image {
+                    id: openedImage
+                    anchors.fill: parent
+                    visible: false
+                    fillMode: Image.PreserveAspectFit
+                }
+
                 onPaint: {
                     var ctx = getContext("2d")
                     ctx.clearRect(0, 0, width, height)
+                    ctx.fillStyle = "lightgray"
+                    ctx.fillRect(0, 0, width, height)
+
+                    if (hasBackgroundImage && openedImage.status === Image.Ready) {
+                        ctx.drawImage(openedImage, 0, 0, width, height)
+                    }
+
                     ctx.drawImage(_bufferCanvas, 0, 0)
 
                     //应用缩放和平移

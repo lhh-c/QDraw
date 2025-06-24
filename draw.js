@@ -117,9 +117,30 @@ function toggleFullscreen() {
 //     content.dialogs.fileSave.open()
 // }
 
+//图片打开实现
 function open() {
     content.dialogs.fileOpen.open()
-    console.log("图片编辑功能有待完善。")
+    content.dialogs.fileOpen.accepted.connect(function() {
+        if (content.dialogs.fileOpen.selectedFile) {
+            //清除当前画布内容但不影响背景图片
+            content.paths = []
+            content.undoStack = []
+            content.redoStack = []
+            if (!content.openedImage) {
+                console.error("openedImage is not available")
+                return
+            }
+            //设置背景图片属性
+            content.backgroundImageUrl = content.dialogs.fileOpen.selectedFile
+            content.hasBackgroundImage = true
+            content.openedImage.source = content.backgroundImageUrl
+            //清除缓冲画布并保留主画布的背景图片
+            var bufferCtx = content.bufferCanvas.getContext("2d")
+            bufferCtx.clearRect(0, 0, content.canvas.width, content.canvas.height)
+            //重绘画布
+            content.canvas.requestPaint()
+        }
+    })
 }
 
 // 文件保存
@@ -192,14 +213,6 @@ function toggleEraser() {
     }
 
     content.isEraser = !content.isEraser;
-
-    if (content.isEraser) {
-        // 切换到橡皮擦模式
-        console.log("橡皮擦模式已启用");
-    } else {
-        // 切换回画笔模式
-        console.log("橡皮擦模式已禁用");
-    }
 }
 
 //粘贴（可以指定粘贴位置），还是不可以

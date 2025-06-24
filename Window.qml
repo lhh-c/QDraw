@@ -74,6 +74,29 @@ ApplicationWindow {
                             ColumnLayout{
                                 anchors.fill: parent
                                 spacing: 5
+                                //当前颜色预览
+                                Rectangle {
+                                    id: currentColorPreview
+                                    implicitHeight: colorGridView.cellWidth
+                                    implicitWidth: colorGridView.cellWidth
+                                    color: content.penColor
+                                    border.color: "white"
+                                    border.width: 2
+                                    Layout.alignment: Qt.AlignHCenter
+
+
+                                    //"当前颜色"标签
+                                    Label {
+                                        text: "当前颜色"
+                                        anchors {
+                                            bottom: parent.top
+                                            bottomMargin: 5
+                                            horizontalCenter: parent.horizontalCenter
+                                        }
+                                        font.bold: true
+                                        color: "white"
+                                    }
+                                }
                                 GridView{
                                     id:colorGridView
                                     Layout.fillWidth: true
@@ -108,7 +131,7 @@ ApplicationWindow {
                             }
                         }
 
-                    // 橡皮擦大小选择器
+                    //橡皮擦大小选择器
                     Rectangle {
                         id: _eraserSizePanel
                         visible: true
