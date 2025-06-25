@@ -23,6 +23,9 @@ Item {
     property alias fullscreen: _fullscreen
     property alias eraser: _eraser
     property alias brokenline: _brokenLine
+    // property alias endterminalbutt: _endTerminalButt
+    property alias endterminalround: _endTerminalRound
+    property alias endterminalsquare: _endTerminalSquare
 
     Action {
         id:_open
@@ -170,6 +173,26 @@ Item {
         checkable: true
         icon.name:"draw-line"
         shortcut: "ctrl + l"
+    }
+
+    // Action{
+    //     id:_endTerminalButt
+    //     text:qsTr("&平头")
+    //     checkable: true
+    // }
+
+    Action{
+        id:_endTerminalRound
+        text: qsTr("&圆头")
+        checkable: true
+        icon.source: "qrc:/round.png"
+    }
+
+    Action{
+        id:_endTerminalSquare
+        text: qsTr("&方头")
+        checkable: true
+        icon.source: "qrc:/square.png"
     }
 
 }

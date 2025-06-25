@@ -55,11 +55,29 @@ ApplicationWindow {
                                  implicitHeight: 50
                             }
                         }
+                        // RowLayout{
+                        //     ToolButton{
+                        //         action: {actions.endterminalround}
+                        //         implicitWidth: 80
+                        //         implicitHeight: 50
+                        //     }
+                        //     ToolButton{
+                        //         action: {actions.endterminalsquare}
+                        //         implicitWidth: 80
+                        //         implicitHeight: 50
+                        //     }
+                        // }
+
                         ToolButton {
                              action: actions.brokenline        //text: qsTr("右旋")
                              implicitWidth: 80
                              implicitHeight: 50
                         }
+
+                        // ToolButton{
+                        //     action: {actions.endterminalbutt}
+                        // }
+
                         Rectangle{
                             id:placeholderRectangle
                             height: 80
@@ -216,11 +234,79 @@ ApplicationWindow {
                         }
 
                         }
+                        // Rectangle{
+                        //     id:endTerminalRectangle
+                        //     width: 200
+                        //     height: 100
+                        //     color:"gray"
+                        //     Layout.alignment: Qt.AlignRight
+                        //     ColumnLayout{
+                        //         ToolButton{
+                        //             action: {actions.endterminalround}
+                        //         }
+                        //         ToolButton{
+                        //             action: {actions.endterminalbutt}
+                        //         }
+                        //         ToolButton{
+                        //             action: {actions.endterminalsquare}
+                        //         }
+                        //     }
+                        // }
                     }
                     Item {
                             Layout.fillHeight: true  //占据剩余空间
                         }
                 }
+                    // 状态栏
+                    Rectangle {
+                        id: statusBar
+                        Layout.fillWidth: true
+                        height: 50
+                        color: Qt.darker("gray", 1.2)  // 深灰
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 10
+                            spacing: 15
+
+                            // 当前模式
+                            Label {
+                                text: {
+                                    if (content.isEraser) return "模式: 橡皮擦";
+                                    else if (content.isBrokenLineMode) return "模式: 折线";
+                                    else return "模式: 画笔";
+                                }
+                                color: "white"
+                                font.bold: true
+                            }
+
+                            // 画笔/橡皮擦
+                            Label {
+                                text: content.isEraser ?
+                                    `橡皮擦大小: ${content.eraserWidth}px` :
+                                    `画笔大小: ${content.penWidth}px`
+                                    color: "white"
+                                }
+
+                            // 当前颜色指示
+                            Rectangle {
+                                width: 20
+                                height: 20
+                                radius: 3
+                                color: content.penColor
+                                border.color: "white"
+                                border.width: 1
+                            }
+
+                            // 画布状态
+                            Label {
+                                text: `缩放: ${Math.round(content.scale * 100)}% | 旋转: ${content.rotationAngle}°`
+                                    color: "white"
+                                }
+                            Item { Layout.fillWidth: true }
+                        }
+                    }
+
             }
         }
     }
@@ -362,6 +448,8 @@ ApplicationWindow {
         zoomin.onTriggered:content.zoom(1.2);
         zoomout.onTriggered: content.zoom(0.8);
         brokenline. onTriggered:Controller.toggleBrokenLineMode();
+        // endterminalround.onTriggered: Controller.endterminalround();
+        // endterminalsquare.onTriggered: Controller.endterminalsquare();
     }
     //Content Area
     // Content {

@@ -362,6 +362,13 @@ function completeBrokenLine() {
     }
 }
 
+// function endterminalround(){
+//     content.penEndTerminal = "round"
+// }
+
+// function endterminalsquare(){
+//     content.penEndTerminal = "square"
+//     }
 
 
 

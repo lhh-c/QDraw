@@ -35,6 +35,7 @@ target_link_libraries(apptest
 )
 
 set_target_properties(apptest PROPERTIES
+    #AUTORCC TRUE 启用系统资源
 #    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.apptest
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}

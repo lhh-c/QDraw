@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>pen.svg.jpg</file>
         <file>eraser.png</file>
+        <file>round.png</file>
+        <file>square.png</file>
     </qresource>
 </RCC>

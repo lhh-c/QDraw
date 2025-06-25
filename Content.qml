@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-
+import "draw.js" as Controller
 Item {
     id: content
     // anchors.fill: parent
@@ -25,6 +25,8 @@ Item {
     property point viewOffset: Qt.point(0, 0)
     property color penColor: "black"
     property real penWidth: 3
+    property string penEndTerminal: "round"
+    property string penCorner: "round"
 
     //橡皮擦属性
     property bool isEraser: false
@@ -41,7 +43,9 @@ Item {
     property var currentPath: ({
         "points": [],
         "width": penWidth,
-        "color": Qt.rgba(penColor.r, penColor.g, penColor.b, penColor.a)
+        "color": Qt.rgba(penColor.r, penColor.g, penColor.b, penColor.a),
+        "endterminal":penEndTerminal,
+        "corner":penCorner
     })
 
     // 折线属性
@@ -182,10 +186,10 @@ Item {
                     ctx.save()
 
                     //实时绘制当前笔迹
-                    function drawPath(points, width, color) {
+                    function drawPath(points, width, color,endterminal,corner) {
                         ctx.lineWidth = width//线条宽度，后续应该会在ui左侧添加显示的选择区域  //调整线宽用于适应缩放
-                        ctx.lineCap = "round"//线端样式（butt、round、square），这和kolourpaint里面可选择的一样
-                        ctx.lineJoin = "round"//转角样式（miter、round、bevel），还不知道是什么效果
+                        ctx.lineCap = endterminal//线端样式（butt、round、square），这和kolourpaint里面可选择的一样//改了但是没有变化？
+                        ctx.lineJoin = corner//转角样式（miter、round、bevel），还不知道是什么效果
                         ctx.strokeStyle = color
 
                         ctx.beginPath()
@@ -199,17 +203,17 @@ Item {
                     //绘制所有已完成路径
                     for (var i = 0; i < content.paths.length; i++) {
                         var path = content.paths[i]
-                        drawPath(path.points, path.width, path.color)
+                        drawPath(path.points, path.width, path.color,path.endterminal,path.corner)
                     }
 
                     //绘制当前路径
                     if (content.currentPath.points.length > 1) {
-                        drawPath(content.currentPath.points, content.currentPath.width, content.currentPath.color)
+                        drawPath(content.currentPath.points, content.currentPath.width, content.currentPath.color,content.currentPath.endterminal,content.currentPath.corner)
                     }
                     ctx.restore()
                     //用于绘画折线
                     if (content.brokenLinePoints.length > 1) {
-                            drawPath(content.brokenLinePoints, content.penWidth, Qt.rgba(content.penColor.r, content.penColor.g, content.penColor.b, content.penColor.a))
+                            drawPath(content.brokenLinePoints, content.penWidth, Qt.rgba(content.penColor.r, content.penColor.g, content.penColor.b, content.penColor.a),content.penEndTerminal,content.penCorner)
                     }
                 }
             }
