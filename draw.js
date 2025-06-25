@@ -117,9 +117,30 @@ function toggleFullscreen() {
 //     content.dialogs.fileSave.open()
 // }
 
+//图片打开实现
 function open() {
     content.dialogs.fileOpen.open()
-    console.log("图片编辑功能有待完善。")
+    content.dialogs.fileOpen.accepted.connect(function() {
+        if (content.dialogs.fileOpen.selectedFile) {
+            //清除当前画布内容但不影响背景图片
+            content.paths = []
+            content.undoStack = []
+            content.redoStack = []
+            if (!content.openedImage) {
+                console.error("openedImage is not available")
+                return
+            }
+            //设置背景图片属性
+            content.backgroundImageUrl = content.dialogs.fileOpen.selectedFile
+            content.hasBackgroundImage = true
+            content.openedImage.source = content.backgroundImageUrl
+            //清除缓冲画布并保留主画布的背景图片
+            var bufferCtx = content.bufferCanvas.getContext("2d")
+            bufferCtx.clearRect(0, 0, content.canvas.width, content.canvas.height)
+            //重绘画布
+            content.canvas.requestPaint()
+        }
+    })
 }
 
 // 文件保存
@@ -182,6 +203,16 @@ function paste() {
 
     content.paths.push(newPath);
     content.canvas.requestPaint();
+}
+
+//橡皮擦实现
+function toggleEraser() {
+    if (!content) {
+        console.error("Content is unavailable.");
+        return;
+    }
+
+    content.isEraser = !content.isEraser;
 }
 
 //粘贴（可以指定粘贴位置），还是不可以
@@ -287,6 +318,49 @@ function deleteall() {
 // function zoomin(){
 //     content.mycanvas.zoom(1.25)
 // }
+
+function toggleBrokenLineMode() {
+    if (!content) {
+        console.error("Content is unavailable.");
+        return;
+    }
+
+    content.isBrokenLineMode = !content.isBrokenLineMode;
+
+    // 如果退出折线模式，清除未完成的折线
+    if (!content.isBrokenLineMode && content.isBrokenLineDrawing) {
+        content.brokenLinePoints = [];
+        content.isBrokenLineDrawing = false;
+        content.canvas.requestPaint();
+    }
+}
+
+// 完成折线绘制
+function completeBrokenLine() {
+    if (content.brokenLinePoints.length > 1) {
+        // 保存折线到路径
+        content.undoStack.push(JSON.parse(JSON.stringify(content.paths)));
+        content.paths.push({
+            "points": content.brokenLinePoints,
+            "width": content.penWidth,
+            "color": Qt.rgba(content.penColor.r, content.penColor.g, content.penColor.b, content.penColor.a)
+        });
+
+        if (content.undoStack.length > content.maxUndoSteps) {
+            content.undoStack.shift();
+        }
+        content.redoStack = [];
+
+        // 更新缓冲画布
+        var bufferCtx = content.bufferCanvas.getContext("2d");
+        bufferCtx.drawImage(content.canvas, 0, 0);
+
+        // 重置状态
+        content.brokenLinePoints = [];
+        content.isBrokenLineDrawing = false;
+        content.canvas.requestPaint();
+    }
+}
 
 
 

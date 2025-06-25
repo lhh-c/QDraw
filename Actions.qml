@@ -21,6 +21,9 @@ Item {
     property alias counterclockwise: _counterclockwise
     property alias clockwise: _clockwise
     property alias fullscreen: _fullscreen
+    property alias eraser: _eraser
+    property alias brokenline: _brokenLine
+
     Action {
         id:_open
         text: qsTr("&打开")
@@ -121,6 +124,14 @@ Item {
     }
 
     Action {
+        id: _eraser
+        text: qsTr("&橡皮擦")
+        checkable: true
+        shortcut: "Ctrl+E"
+        icon.source: "qrc:/eraser.png"
+    }
+
+    Action {
         id:_zoomin
         text:qsTr("&放大")
         icon.name:"zoom-in"
@@ -152,4 +163,13 @@ Item {
         shortcut: "F11" // 添加F11快捷键
         checkable: true
     }
+
+    Action{
+        id:_brokenLine
+        text: qsTr("&折线")
+        checkable: true
+        icon.name:"draw-line"
+        shortcut: "ctrl + l"
+    }
+
 }
