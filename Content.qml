@@ -236,9 +236,19 @@ Item {
                 var rad = rotationAngle * Math.PI / 180;
                 var cos = Math.cos(rad);
                 var sin = Math.sin(rad);
-                var x1 = point.x * cos + point.y * sin;
-                var y1 = -point.x * sin + point.y * cos;
-
+                    if(rotationAngle == 180){              // 翻转校准
+                        var x1 = -point.x * cos + point.y * sin;
+                        var y1 = point.x * sin - point.y * cos;
+                    }else if(rotationAngle == 90 ){        // 右旋校准
+                        y1 = -point.x * cos + point.y * sin;
+                        x1 = point.x * sin - point.y * cos;
+                    }else if(rotationAngle == 270 ){       // 左旋校准
+                        y1 = point.x * cos - point.y * sin;
+                        x1 = -point.x * sin + point.y * cos;
+                    }else{
+                        x1 = point.x * cos + point.y * sin;
+                        y1 = -point.x * sin + point.y * cos;
+                    }
                 //应用逆缩放
                 x1 = x1 / scale;
                 y1 = y1 / scale;
