@@ -4,5 +4,6 @@
         <file>eraser.png</file>
         <file>round.png</file>
         <file>square.png</file>
+        <file>drawboard.png</file>
     </qresource>
 </RCC>
