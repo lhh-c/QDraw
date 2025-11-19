@@ -66,8 +66,8 @@ Item {
     //画布容器
     Item {
         id: _canvasContainer
-        width: 990
-        height: 990
+        width: 1440
+        height: 1440
         anchors.top: parent.top
         anchors.left: parent.left
 
